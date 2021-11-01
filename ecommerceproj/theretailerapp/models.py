@@ -2,6 +2,7 @@ from django.db import models
 import uuid
 from django.urls import reverse
 from django.core.validators import RegexValidator
+from phonenumber_field.modelfields import PhoneNumberField
 
 class Country(models.Model):
     country_name = models.CharField(max_length=200, help_text='Enter a Country name')
@@ -15,7 +16,7 @@ class Customer(models.Model):
     last_name = models.CharField(max_length=20, help_text='Enter last name')
     shipping_address = models.CharField(max_length=200, help_text='Shipping Address')
     billing_address = models.CharField(max_length=200, help_text='Billing Address')
-    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
+    ph_number = PhoneNumberField()
     email = models.EmailField(max_length = 254)
     counrty = models.ForeignKey('Country', on_delete=models.SET_NULL, null=True)
     created_at = models.DateField(null=True, blank=True)
