@@ -56,7 +56,9 @@ ROOT_URLCONF = 'ecommerceproj.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join('theretailerapp','templates')],
+        'DIRS': [
+            os.path.join('theretailerapp','templates')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

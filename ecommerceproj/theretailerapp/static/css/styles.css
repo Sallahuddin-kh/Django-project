@@ -3,16 +3,15 @@ body {
   font-family: "Trebuchet MS", sans-serif;
   font-weight: bold;
 }
-ul {
-  background: #3399ff;
-  padding: 20px;
-}
+
 ul li {
   background: #cce5ff;
   margin: 5px;
   border-radius: 25px;
   border: 2px solid #0f4979;
   padding: 20px;
+  display: block;
+  float: left;
 }
 .button {
   background-color: #4caf50;
