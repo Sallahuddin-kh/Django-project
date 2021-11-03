@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block title %}<title>The retailer app</title>{% endblock %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Add additional CSS in static file -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+<div class = "container">
+<a class='button button2' href="/" >Customer List</a> 
+<h1>Product List</h1>
+<div class = "row">
+{% block content %}
+  
+  {% if product_list %}
+  <ul>
+    {% for product in product_list %}
+      <li>
+        <p>Product name: {{ product.product_name }}</p>
+        <p>description: {{product.description}}</p>
+        <p>price: {{product.price}}</p>
+        <p>available_quantity: {{product.available_quantity}}</p>
+        <p>Created at: {{product.created_at}}</p>
+        <p>Updated at: {{product.updated_at}}</p>
+      </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>There are no products.</p>
+  {% endif %}
+{% endblock %}
+  </ul>
+</div>
+</div>
+</body>
+</html>
