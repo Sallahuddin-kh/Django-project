@@ -21,6 +21,8 @@ class Customer(models.Model):
     counrty = models.ForeignKey('Country', on_delete=models.SET_NULL, null=True)
     created_at = models.DateField(null=True, blank=True)
     updated_at = models.DateField(null=True, blank=True)
+    def __str__(self):
+        return self.first_name
 
 class Product(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, help_text='Unique ID for this particular product across whole shop')
@@ -30,3 +32,5 @@ class Product(models.Model):
     available_quantity = models.PositiveIntegerField()
     created_at = models.DateField(null=True, blank=True)
     updated_at = models.DateField(null=True, blank=True)
+    def __str__(self):
+        return self.product_name
