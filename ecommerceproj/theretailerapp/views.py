@@ -7,5 +7,3 @@ class CustomerListView(generic.ListView):
 
 class ProductListView(generic.ListView):
     model = Product
-
-
