@@ -1,39 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    {% block title %}<title>The retailer app</title>{% endblock %}
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    {% block title %}
+    <title>The retailer app</title>
+    {% endblock %}
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- Add additional CSS in static file -->
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-</head>
-<body>
-<div class = "container">
-<a class='button button2' href="/" >Customer List</a> 
-<h1>Product List</h1>
-<div class = "row">
-{% block content %}
-  
-  {% if product_list %}
-  <ul>
-    {% for product in product_list %}
-      <li>
-        <p>Product name: {{ product.product_name }}</p>
-        <p>description: {{product.description}}</p>
-        <p>price: {{product.price}}</p>
-        <p>available quantity: {{product.available_quantity}}</p>
-        <p>Created at: {{product.created_at}}</p>
-        <p>Updated at: {{product.updated_at}}</p>
-      </li>
-    {% endfor %}
-  </ul>
-  {% else %}
-    <p>There are no products.</p>
-  {% endif %}
-{% endblock %}
-  </ul>
-</div>
-</div>
-</body>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+  </head>
+  <body>
+    <div class="container">
+      <a class="button button2" href="/">Customer List</a>
+      <h1>Product List</h1>
+      <div class="row">
+        {% block content %} {% if product_list %}
+        <table>
+          <tr>
+            <th>Product name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Available quantity</th>
+            <th>Created At</th>
+            <th>Updated At</th>
+          </tr>
+          {% for product in product_list %}
+          <tr>
+            <td>{{ product.product_name }}</td>
+            <td>{{product.description}}</td>
+            <td>{{product.price}}</td>
+            <td>{{product.available_quantity}}</td>
+            <td>{{product.created_at}}</td>
+            <td>{{product.updated_at}}</td>
+          </tr>
+          {% endfor %}
+        </table>
+
+        {% endif %} {% endblock %}
+      </div>
+    </div>
+  </body>
 </html>
