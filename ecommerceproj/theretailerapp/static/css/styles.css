@@ -1,0 +1,68 @@
+body {
+  padding: 2rem 0rem;
+  font-family: "Trebuchet MS", sans-serif;
+  font-weight: bold;
+}
+
+.button {
+  background-color: #4caf50;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+.button2 {
+  background-color: white;
+  color: black;
+  border: 2px solid #008cba;
+}
+
+.button2:hover {
+  background-color: #008cba;
+  color: white;
+}
+h1 {
+  color: rgb(0, 0, 0);
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  font-family: arial;
+  text-transform: uppercase;
+  top: 50%;
+  position: static;
+  font-size: 5em;
+  text-shadow: 0px 0px 10px #3399ff, 0px 0px 40px #3399ff, 0px 0px 80px purple,
+    0px 0px 120px #3399ff, 0px 0px 200px #3399ff;
+}
+
+table {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table td,
+table th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+table tr:hover {
+  background-color: #ddd;
+}
+
+table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #3399ff;
+  color: white;
+}
