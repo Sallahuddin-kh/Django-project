@@ -31,7 +31,7 @@ def insert_customer(request):
         if(created_at>updated_at):
             messages.warning(request, 'Updated Date larger than Creation Date')
         else:
-            ins = Customer(first_name=first_name,
+            customer_instance = Customer(first_name=first_name,
             last_name=last_name,
             shipping_address=shipping_address,
             billing_address=billing_address,
@@ -39,7 +39,7 @@ def insert_customer(request):
             created_at=created_at_str,
             updated_at=updated_at_str,
             )
-            ins.counrty = selected_country_obj
-            ins.save()
+            customer_instance.counrty = selected_country_obj
+            customer_instance.save()
             HttpResponseRedirect('/')
-    return render(request,'theretailerapp/customer_form.html', {'countries':country},)
+    return render(request,'theretailerapp/customer_signup_form.html', {'countries':country},)
