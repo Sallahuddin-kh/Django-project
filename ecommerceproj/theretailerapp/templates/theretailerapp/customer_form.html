@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block title %}
+    <title>The retailer app</title>
+    {% endblock %}
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/form_styles.css' %}" />
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="main-block">
+      <h1>Customer Sign Up</h1>
+      {% block content %}
+      <form action="" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <p>
+            <label for="id_first_name">First Name:</label>
+            <input type="text" name="first_name" id="first_name" required />
+          </p>
+          <p>
+            <label for="id_last_name">Last Name:</label>
+            <input type="text" name="last_name" id="last_name" required />
+          </p>
+          <p>
+            <label for="id_shipping_address">Shipping Address:</label>
+            <input
+              type="text"
+              name="shipping_address"
+              id="shipping_address"
+              required
+            />
+          </p>
+          <p>
+            <label for="id_billing_address">Billing Address:</label>
+            <input
+              type="text"
+              name="billing_address"
+              id="billing_address"
+              required
+            />
+          </p>
+          <p>
+            <label for="id_email">Email Address:</label>
+            <input type="email" name="email" id="email" required />
+          </p>
+          <p>
+            <label for="id_ph_number">Phone number:</label>
+            <input
+              type="tel"
+              id="ph_number"
+              name="ph_number"
+              placeholder="+9212345678123"
+              pattern="+[0-9]{13}"
+              required
+            />
+            </br>
+            <small>Format: +1234567891234</small>
+            </br></br>
+          </p>
+          <p>
+            <label for="id_created_at">Created at:</label>
+            <input type="date" name="created_at" id="created_at" required />
+          </p>
+          <p>
+            <label for="id_updated_at">Updated at:</label>
+            <input type="date" name="updated_at" id="updated_at" required />
+          </p>
+          <p>
+            <select name="country">
+              {% for country in countries %}
+              <option value="{{ country.country_name }}">
+                {{ country.country_name }}
+              </option>
+              {% endfor %}
+            </select>
+          </p>
+          <div class="btn-block">
+          <button type="submit" value="Submit">Submit</button>
+          </div>
+        </div>
+      </form>
+      {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+      {% endif %}
+      {% endblock %}
+    </div>
+
+  </body>
+</html>
