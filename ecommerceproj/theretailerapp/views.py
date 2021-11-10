@@ -20,6 +20,9 @@ def insert_customer(request):
         billing_address = request.POST.get("billing_address")
         ph_number = request.POST.get("ph_number")
         email = request.POST.get("email")
+        if Customer.objects.filter(email = email).exists():
+            messages.error(request,'Email Already exists')
+            return render(request,'theretailerapp/customer_signup_form.html', {'countries':country},)
         selected_country  = request.POST.get("country")
         selected_country_obj = Country.objects.get(country_name = selected_country)
         created_at = datetime.date.today()
