@@ -7,11 +7,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/form_styles.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/form_styles.css' %}" /> 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   </head>
   <body>
+
     <div class="main-block">
+      {% include 'theretailerapp/message.html' %}
       <h1>Customer Sign Up</h1>
+      
       {% block content %}
       <form action="" method="post">
         {% csrf_token %}
@@ -61,14 +66,6 @@
             </br></br>
           </p>
           <p>
-            <label for="id_created_at">Created at:</label>
-            <input type="date" name="created_at" id="created_at" required />
-          </p>
-          <p>
-            <label for="id_updated_at">Updated at:</label>
-            <input type="date" name="updated_at" id="updated_at" required />
-          </p>
-          <p>
             <select name="country">
               {% for country in countries %}
               <option value="{{ country.country_name }}">
@@ -82,13 +79,6 @@
           </div>
         </div>
       </form>
-      {% if messages %}
-        <ul>
-            {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-      {% endif %}
       {% endblock %}
     </div>
 
