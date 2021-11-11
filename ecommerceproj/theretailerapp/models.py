@@ -16,6 +16,7 @@ class Customer(models.Model):
     last_name = models.CharField(max_length=20, help_text='Enter last name')
     shipping_address = models.CharField(max_length=200, help_text='Shipping Address')
     billing_address = models.CharField(max_length=200, help_text='Billing Address')
+    password = models.CharField(max_length=50)
     ph_number = PhoneNumberField()
     email = models.EmailField(unique=True,max_length = 254)
     counrty = models.ForeignKey('Country', on_delete=models.SET_NULL, null=True)
