@@ -16,6 +16,14 @@
             <input type="text" name="last_name" id="last_name" required />
           </p>
           <p>
+            <label for="id_password">Password:</label>
+            <input type="password" id="password" name="password" required>
+          </p>
+          <p>
+            <label for="id_confirm_password">Confirm Password:</label>
+            <input type="password" id="confirm_password" name="confirm_password" required>
+          </p>
+          <p>
             <label for="id_shipping_address">Shipping Address:</label>
             <input
               type="text"
@@ -47,9 +55,9 @@
               pattern="+[0-9]{13}"
               required
             />
-            </br>
+            <br>
             <small>Format: +1234567891234</small>
-            </br></br>
+            <br><br>
           </p>
           <p>
             <select name="country">

@@ -22,6 +22,11 @@ def insert_customer(request):
         billing_address = request.POST.get("billing_address")
         ph_number = request.POST.get("ph_number")
         email = request.POST.get("email")
+        password = request.POST.get("password")
+        confirm_password = request.POST.get("confirm_password")
+        if password != confirm_password:
+            messages.error(request,'Password and Confirm password do not match')
+            return render(request,'theretailerapp/customer_signup_form.html', {'countries':country},)
         if Customer.objects.filter(email = email).exists():
             messages.error(request,'Email Already exists')
             return render(request,'theretailerapp/customer_signup_form.html', {'countries':country},)
@@ -37,6 +42,7 @@ def insert_customer(request):
             ph_number=ph_number,email=email,
             created_at=created_at_str,
             updated_at=created_at_str,
+            user_password = password,
             )
             customer_instance.counrty = selected_country_obj
             customer_instance.save()
@@ -50,14 +56,18 @@ def insert_customer(request):
 def login_customer(request):
     if request.method == 'POST':
         email = request.POST.get("email")
+        password = request.POST.get("password")
         if Customer.objects.filter(email = email).exists():
             customer =  Customer.objects.get(email = email)
-            request.session['does_exist'] = 'true'
-            request.session['email'] = customer.email
-            request.session['first_name'] = customer.first_name
-            return HttpResponseRedirect('/product')
+            if customer.user_password == password:
+                request.session['does_exist'] = 'true'
+                request.session['email'] = customer.email
+                request.session['first_name'] = customer.first_name
+                return HttpResponseRedirect('/product')
+            else:
+                messages.error(request,'Incorrect password')
         else:
-            messages.error(request,'User Does not exist')
+            messages.error(request,'Incorrect email')
     return render(request,'theretailerapp/customer_signin_form.html')
 
 def customer_sign_out(request):

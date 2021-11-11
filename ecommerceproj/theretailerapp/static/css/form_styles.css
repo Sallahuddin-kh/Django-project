@@ -43,6 +43,7 @@ input[type="text"],
 input[type="email"],
 input[type="tel"],
 input[type="date"],
+input[type="password"],
 select {
   width: calc(100% - 57px);
   height: 36px;

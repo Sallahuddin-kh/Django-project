@@ -21,6 +21,7 @@ class Customer(models.Model):
     counrty = models.ForeignKey('Country', on_delete=models.SET_NULL, null=True)
     created_at = models.DateField(null=True, blank=True)
     updated_at = models.DateField(null=True, blank=True)
+    user_password = models.CharField(max_length=50)
     def __str__(self):
         return self.first_name
 
