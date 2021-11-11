@@ -14,6 +14,9 @@ def product_list_view(request):
     return render(request, 'theretailerapp/product_list.html', context)
 
 def insert_customer(request):
+    if 'email' in request.session:
+        messages.warning(request,'Customer Already logged In. Sign Out to proceed')
+        return HttpResponseRedirect('/product')
     country  = Country.objects.all()
     if request.method == 'POST':
         first_name = request.POST.get("first_name")
@@ -54,13 +57,15 @@ def insert_customer(request):
     return render(request,'theretailerapp/customer_signup_form.html', {'countries':country},)
 
 def login_customer(request):
+    if 'email' in request.session:
+        messages.warning(request,'Customer Already logged In')
+        return HttpResponseRedirect('/product')
     if request.method == 'POST':
         email = request.POST.get("email")
         password = request.POST.get("password")
         if Customer.objects.filter(email = email).exists():
             customer =  Customer.objects.get(email = email)
             if customer.user_password == password:
-                request.session['does_exist'] = 'true'
                 request.session['email'] = customer.email
                 request.session['first_name'] = customer.first_name
                 return HttpResponseRedirect('/product')
