@@ -17,7 +17,7 @@ class Customer(models.Model):
     shipping_address = models.CharField(max_length=200, help_text='Shipping Address')
     billing_address = models.CharField(max_length=200, help_text='Billing Address')
     ph_number = PhoneNumberField()
-    email = models.EmailField(max_length = 254)
+    email = models.EmailField(unique=True,max_length = 254)
     counrty = models.ForeignKey('Country', on_delete=models.SET_NULL, null=True)
     created_at = models.DateField(null=True, blank=True)
     updated_at = models.DateField(null=True, blank=True)
