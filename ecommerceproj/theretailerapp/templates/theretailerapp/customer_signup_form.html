@@ -1,22 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    {% block title %}
-    <title>The retailer app</title>
-    {% endblock %}
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/form_styles.css' %}" /> 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  </head>
-  <body>
-
+    {% include 'theretailerapp/form_generic.html' %}
     <div class="main-block">
+      <br><br>
       {% include 'theretailerapp/message.html' %}
-      <h1>Customer Sign Up</h1>
-      
+      <h1>Customer Sign Up</h1>      
       {% block content %}
       <form action="" method="post">
         {% csrf_token %}
@@ -77,6 +63,7 @@
           <div class="btn-block">
           <button type="submit" value="Submit">Submit</button>
           </div>
+          <a href="/customer/login">Already Have an Account? Sign In</a>
         </div>
       </form>
       {% endblock %}

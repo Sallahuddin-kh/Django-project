@@ -66,3 +66,32 @@ table th {
   background-color: #3399ff;
   color: white;
 }
+
+.topnav {
+  background-color: #3399ff;
+  overflow: hidden;
+}
+
+.topnav a {
+  float: right;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav p{
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav a:hover {
+  background-color: #ffffff;
+  color: black;
+}
+ 

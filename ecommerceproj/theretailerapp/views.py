@@ -8,8 +8,10 @@ import datetime
 class CustomerListView(generic.ListView):
     model = Customer
 
-class ProductListView(generic.ListView):
-    model = Product
+def product_list_view(request):
+    products = Product.objects.all()
+    context = {'product_list':products}
+    return render(request, 'theretailerapp/product_list.html', context)
 
 def insert_customer(request):
     country  = Country.objects.all()
@@ -42,5 +44,24 @@ def insert_customer(request):
             print(e)
             messages.error(request,'System was not able to register try later')
         messages.success(request, 'Customer Accounted Created Succesfully.')
-        return HttpResponseRedirect('/')
+        return HttpResponseRedirect('/product')
     return render(request,'theretailerapp/customer_signup_form.html', {'countries':country},)
+
+def login_customer(request):
+    if request.method == 'POST':
+        email = request.POST.get("email")
+        if Customer.objects.filter(email = email).exists():
+            customer =  Customer.objects.get(email = email)
+            request.session['does_exist'] = 'true'
+            request.session['email'] = customer.email
+            request.session['first_name'] = customer.first_name
+            return HttpResponseRedirect('/product')
+        else:
+            messages.error(request,'User Does not exist')
+    return render(request,'theretailerapp/customer_signin_form.html')
+
+def customer_sign_out(request):
+    request.session.flush()
+    messages.success(request, 'Signed Out Successfully')
+    return HttpResponseRedirect('/product')
+    
