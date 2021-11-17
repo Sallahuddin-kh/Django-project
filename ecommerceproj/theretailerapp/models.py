@@ -35,3 +35,11 @@ class Product(models.Model):
     updated_at = models.DateField(null=True, blank=True)
     def __str__(self):
         return self.product_name
+
+class Basket(models.Model):
+    customer = models.ForeignKey(Customer,on_delete=models.CASCADE)
+
+class BasketItem(models.Model):
+    basket = models.ForeignKey(Basket,on_delete=models.CASCADE)
+    product = models.ForeignKey(Product,on_delete=models.CASCADE)
+    quantity = models.IntegerField(default = 0)

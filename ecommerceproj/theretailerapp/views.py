@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Customer, Product, Country
+from .models import Customer, Product, Country, Basket, BasketItem
 from django.views import generic
 from django.http import HttpResponseRedirect
 from django.contrib import messages
@@ -79,3 +79,47 @@ def customer_sign_out(request):
     request.session.flush()
     messages.success(request, 'Signed Out Successfully')
     return HttpResponseRedirect('/product')
+
+def add_product_to_basket(request,id):
+    if 'email' in request.session:
+        customer_email= request.session['email']
+        customer_obj = Customer.objects.get(email = customer_email)
+        product_obj = Product.objects.get(id = id)
+        if product_obj.available_quantity <= 0:
+            msg = product_obj.product_name + ' Out of stock. Product not added to basket'
+            messages.error(request, msg)
+            return HttpResponseRedirect('/product')
+        if not Basket.objects.filter(customer = customer_obj).exists():
+            print("Creating new basket")  
+            basket_instance = Basket(customer = customer_obj) 
+            basket_instance.save()
+        basket = Basket.objects.filter(customer = customer_obj).get()
+        basket_item = BasketItem(basket = basket,product = product_obj,quantity = 1)
+        basket_item.save()
+        msg = product_obj.product_name + ' Added to basket successfully'
+        messages.success(request, msg)
+        return HttpResponseRedirect('/product')
+    else:
+        return HttpResponseRedirect('/customer/login')
+
+def customer_basket(request):
+    if 'email' in request.session:
+        customer_email= request.session['email']
+        customer_obj = Customer.objects.get(email = customer_email)
+        if Basket.objects.filter(customer = customer_obj).exists():
+            basket = Basket.objects.filter(customer = customer_obj).get()
+            basket_items = BasketItem.objects.filter(basket = basket)
+            return render(request,'theretailerapp/basket_list.html',{'items':basket_items})
+        return render(request,'theretailerapp/basket_list.html')
+    else:
+        return HttpResponseRedirect('/customer/login')
+
+def remove_product_from_basket(request,id):
+    if 'email' in request.session:
+        product_name = BasketItem.objects.filter(id=id).get().product.product_name
+        msg = product_name + ' removed from basket successfully'
+        BasketItem.objects.filter(id=id).delete()
+        messages.success(request, msg)
+        return HttpResponseRedirect('/basket')
+    else:
+        return HttpResponseRedirect('/customer/login')

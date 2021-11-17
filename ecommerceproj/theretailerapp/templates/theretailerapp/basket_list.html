@@ -1,0 +1,32 @@
+    {% include 'theretailerapp/generic.html' %}
+    <div class="container">
+      <h1>Basket</h1>
+      <div class="row">
+        {% block content %}
+          {% if items %}
+            <table>
+              <tr>
+                <th>Product name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Available quantity</th>
+                <th>Remove</th>
+              </tr>
+              {% for product in items %}
+                <tr>
+                  <td>{{ product.product.product_name }}</td>
+                  <td>{{product.product.description}}</td>
+                  <td>{{product.product.price}}</td>
+                  <td>{{product.product.available_quantity}}</td>
+                  <td> <a href="{% url 'remove_from_basket' product.id %}">Remove</a></td>
+                </tr>
+              {% endfor %}
+            </table>
+          {% else %}
+            <p>There are no products in basket.</p>
+          {% endif %} 
+        {% endblock %}
+      </div>
+    </div>
+  </body>
+</html>
