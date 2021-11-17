@@ -1,0 +1,97 @@
+html,
+body {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+}
+body,
+div,
+h1,
+form,
+input,
+p {
+  padding: 0;
+  margin: 0;
+  outline: none;
+  font-family: Roboto, Arial, sans-serif;
+  font-size: 16px;
+  color: #666;
+}
+h1 {
+  padding: 10px 0;
+  font-size: 32px;
+  font-weight: 300;
+  text-align: center;
+}
+p {
+  font-size: 12px;
+}
+.main-block {
+  max-width: 340px;
+  min-height: 460px;
+  padding: 10px 0;
+  margin: auto;
+  border-radius: 5px;
+  border: solid 1px #ccc;
+  box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.31);
+  background: #ebebeb;
+}
+form {
+  margin: 0 30px;
+}
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+input[type="password"],
+select {
+  width: calc(100% - 57px);
+  height: 36px;
+  margin: 13px 0 0 -5px;
+  padding-left: 10px;
+  border-radius: 0 5px 5px 0;
+  border: solid 1px #cbc9c9;
+  box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.09);
+  background: #fff;
+}
+button {
+  width: 100%;
+  padding: 10px 0;
+  margin: 10px auto;
+  border-radius: 5px;
+  border: none;
+  background: #1c87c9;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+button:hover {
+  background: #26a9e0;
+}
+.topnav {
+  background-color: #3399ff;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+.topnav a {
+  float: right;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+.topnav p{
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+.topnav a:hover {
+  background-color: #ffffff;
+  color: black;
+}

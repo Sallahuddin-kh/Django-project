@@ -1,17 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    {% block title %}
-    <title>The retailer app</title>
-    {% endblock %}
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
-  </head>
-  <body>
+    {% include 'theretailerapp/generic.html' %}
     <div class="container">
-      <a class="button button2" href="product">Product List</a>
       <h1>Customer List</h1>
       <div>
         {% block content %}

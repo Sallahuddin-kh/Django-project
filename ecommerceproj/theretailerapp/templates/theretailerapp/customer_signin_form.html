@@ -1,0 +1,27 @@
+    {% include 'theretailerapp/form_generic.html' %}
+    <div class="main-block">
+      {% include 'theretailerapp/message.html' %}
+      <h1>Customer Log In</h1>      
+      {% block content %}
+      <form action="" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <p>
+            <label for="id_email">Email Address:</label>
+            <input type="email" name="email" id="email" required />
+          </p>
+          <p>
+            <label for="id_password">Password:</label>
+            <input type="password" name="password" id="password" required />
+          </p>
+          <div class="btn-block">
+          <button type="submit" value="Submit">Submit</button>
+          </div>
+          <a href="/customer/create">Create an Account</a>
+        </div>
+      </form>
+      {% endblock %}
+    </div>
+
+  </body>
+</html>
