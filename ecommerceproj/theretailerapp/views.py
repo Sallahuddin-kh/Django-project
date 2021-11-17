@@ -79,4 +79,3 @@ def customer_sign_out(request):
     request.session.flush()
     messages.success(request, 'Signed Out Successfully')
     return HttpResponseRedirect('/product')
-    
