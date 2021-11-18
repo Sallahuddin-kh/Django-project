@@ -10,7 +10,7 @@
                 <th>Description</th>
                 <th>Price</th>
                 <th>Available quantity</th>
-                <th>Remove</th>
+                <th>Remove Order</th>
               </tr>
               {% for product in items %}
                 <tr>
@@ -26,6 +26,9 @@
             <p>There are no products in basket.</p>
           {% endif %} 
         {% endblock %}
+      </div>
+      <div>
+        <button class = "button2">Checkout Order</button>
       </div>
     </div>
   </body>

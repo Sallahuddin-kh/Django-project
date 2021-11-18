@@ -43,3 +43,19 @@ class BasketItem(models.Model):
     basket = models.ForeignKey(Basket,on_delete=models.CASCADE)
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
     quantity = models.IntegerField(default = 0)
+
+class ApprovalStatus(models.Model):
+    approval_status = models.CharField(max_length=200, help_text='Enter the approval status')
+
+    def __str__(self):
+        return self.approval_status
+
+class Order(models.Model):
+    customer = models.ForeignKey(Customer,on_delete=models.CASCADE)
+    approval_status = models.ForeignKey('ApprovalStatus', on_delete=models.SET_NULL, null=True)
+    placed_at = models.DateField(null=True, blank=True)
+    order_shipping_address = models.CharField(max_length=200, help_text='Shipping Address')
+
+class OrderItem(models.Model):
+     product = models.ForeignKey(Product,on_delete=models.CASCADE)
+     order = models.ForeignKey(Order, on_delete=models.CASCADE)

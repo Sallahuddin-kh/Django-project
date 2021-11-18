@@ -85,7 +85,8 @@ def add_product_to_basket(request,id):
         customer_email= request.session['email']
         customer_obj = Customer.objects.get(email = customer_email)
         product_obj = Product.objects.get(id = id)
-        if product_obj.available_quantity <= 0:
+        available_quantity = product_obj.available_quantity
+        if available_quantity <= 0:
             msg = product_obj.product_name + ' Out of stock. Product not added to basket'
             messages.error(request, msg)
             return HttpResponseRedirect('/product')
@@ -96,6 +97,7 @@ def add_product_to_basket(request,id):
         basket = Basket.objects.filter(customer = customer_obj).get()
         basket_item = BasketItem(basket = basket,product = product_obj,quantity = 1)
         basket_item.save()
+        Product.objects.filter(id = id).update(available_quantity = available_quantity - 1)
         msg = product_obj.product_name + ' Added to basket successfully'
         messages.success(request, msg)
         return HttpResponseRedirect('/product')
@@ -117,9 +119,15 @@ def customer_basket(request):
 def remove_product_from_basket(request,id):
     if 'email' in request.session:
         product_name = BasketItem.objects.filter(id=id).get().product.product_name
+        product_id = BasketItem.objects.filter(id=id).get().product.id
+        available_quantity = Product.objects.filter(id = product_id).get().available_quantity
+        Product.objects.filter(id = product_id).update(available_quantity = available_quantity +1)
         msg = product_name + ' removed from basket successfully'
         BasketItem.objects.filter(id=id).delete()
         messages.success(request, msg)
         return HttpResponseRedirect('/basket')
     else:
         return HttpResponseRedirect('/customer/login')
+
+def place_order(request,id):
+    print(id)
