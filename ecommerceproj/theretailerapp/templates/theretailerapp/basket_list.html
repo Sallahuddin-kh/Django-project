@@ -22,14 +22,15 @@
                 </tr>
               {% endfor %}
             </table>
+            <div>
+                <a class="btn btn-primary btn-lg btn-block" href = "order/place">Checkout Order</a>
+            </div>
           {% else %}
             <p>There are no products in basket.</p>
           {% endif %} 
         {% endblock %}
       </div>
-      <div>
-        <button class = "button2">Checkout Order</button>
-      </div>
+
     </div>
   </body>
 </html>

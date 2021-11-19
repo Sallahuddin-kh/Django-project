@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Customer, Product, Country, Basket, BasketItem
+from .models import ApprovalStatus, Customer, Product, Country, Basket, BasketItem, Order, OrderItem
 from django.views import generic
 from django.http import HttpResponseRedirect
 from django.contrib import messages
@@ -129,5 +129,79 @@ def remove_product_from_basket(request,id):
     else:
         return HttpResponseRedirect('/customer/login')
 
-def place_order(request,id):
-    print(id)
+def place_order_form(request):
+    if 'email' in request.session:
+        customer_email= request.session['email']
+        customer_obj = Customer.objects.get(email = customer_email)
+        basket = Basket.objects.filter(customer = customer_obj).get()
+        basket_items = BasketItem.objects.filter(basket = basket)
+        default_shipping_address = customer_obj.shipping_address
+        total_price = 0
+        for item in basket_items:
+            total_price = total_price + item.product.price
+        if request.method == 'GET':
+            return render(request,'theretailerapp/order_confirmation.html',
+            {'items':basket_items,
+            'shipping_address':default_shipping_address,
+            'total_price':total_price})
+        else:
+            order_address = request.POST.get("shipping_address")
+            placed_at = datetime.date.today()
+            placed_at_str = placed_at.strftime('%Y-%m-%d')
+            approval_status = ApprovalStatus.objects.get(approval_status = 'pending')
+            order_instance = Order(customer = customer_obj,
+                                    approval_status = approval_status,
+                                    placed_at = placed_at_str,
+                                    order_shipping_address = order_address,
+                                    order_price = total_price)
+            order_instance.save()
+            for item in basket_items:
+                product = item.product
+                order_item_instance = OrderItem(product=product, order = order_instance)
+                order_item_instance.save()
+                item.delete()
+            basket.delete()
+            messages.success(request, "Order Placed")
+            return HttpResponseRedirect('/basket')
+    else:
+        return HttpResponseRedirect('/customer/login')
+
+def show_customer_orders(request):
+    if 'email' in request.session:
+        customer_email= request.session['email']
+        customer_obj = Customer.objects.get(email = customer_email)
+        order = Order.objects.filter(customer = customer_obj)
+        start_date ='' 
+        end_date = ''
+        return render(request,'theretailerapp/order_list.html', {'order_list' :  order,
+                                                                'start_date':start_date,
+                                                                'end_date':end_date})
+    else:
+        return HttpResponseRedirect('/customer/login')
+
+def show_order_details(request,id):
+    if 'email' in request.session:
+        order_items = OrderItem.objects.filter(order = id)
+        order = Order.objects.get(id = id)
+        return render(request,'theretailerapp/order_details.html', {'product_list' :  order_items, 'order': order})
+    else:
+        return HttpResponseRedirect('/customer/login')
+
+def cancel_order(request,id):
+    if 'email' in request.session:
+        approval_status = ApprovalStatus.objects.get(approval_status = 'cancelled')
+        order = Order.objects.filter(id = id).update(approval_status = approval_status)
+        messages.warning(request,'Order Cancelled')
+        return HttpResponseRedirect('/order')
+    else:
+        return HttpResponseRedirect('/customer/login')
+
+def filter_order(request):
+    from_date = request.GET.get('from_filter_date')
+    to_date = request.GET.get('to_filter_date')
+    customer_email= request.session['email']
+    customer_obj = Customer.objects.get(email = customer_email)
+    order = Order.objects.filter(customer = customer_obj).filter(placed_at__range=[from_date, to_date])
+    return render(request,'theretailerapp/order_list.html', {'order_list' :  order,
+                                                            'start_date':from_date,
+                                                            'end_date':to_date})

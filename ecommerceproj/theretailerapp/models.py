@@ -55,6 +55,7 @@ class Order(models.Model):
     approval_status = models.ForeignKey('ApprovalStatus', on_delete=models.SET_NULL, null=True)
     placed_at = models.DateField(null=True, blank=True)
     order_shipping_address = models.CharField(max_length=200, help_text='Shipping Address')
+    order_price = models.FloatField()
 
 class OrderItem(models.Model):
      product = models.ForeignKey(Product,on_delete=models.CASCADE)
