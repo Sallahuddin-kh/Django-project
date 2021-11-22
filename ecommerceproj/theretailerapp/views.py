@@ -190,7 +190,12 @@ def show_order_details(request,id):
 def cancel_order(request,id):
     if 'email' in request.session:
         approval_status = ApprovalStatus.objects.get(approval_status = 'cancelled')
-        order = Order.objects.filter(id = id).update(approval_status = approval_status)
+        Order.objects.filter(id = id).update(approval_status = approval_status)
+        order = Order.objects.filter(id = id).get()
+        order_items = OrderItem.objects.filter(order = order)
+        for item in order_items:
+            available_quantity = Product.objects.filter(id = item.product.id).get().available_quantity
+            Product.objects.filter(id = item.product.id).update(available_quantity = available_quantity +1)
         messages.warning(request,'Order Cancelled')
         return HttpResponseRedirect('/order')
     else:
