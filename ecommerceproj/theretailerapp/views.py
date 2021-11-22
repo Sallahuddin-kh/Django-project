@@ -9,7 +9,7 @@ class CustomerListView(generic.ListView):
     model = Customer
 
 def product_list_view(request):
-    products = Product.objects.all()
+    products = Product.objects.filter(is_active = True)
     context = {'product_list':products}
     return render(request, 'theretailerapp/product_list.html', context)
 

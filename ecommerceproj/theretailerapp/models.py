@@ -33,6 +33,7 @@ class Product(models.Model):
     available_quantity = models.PositiveIntegerField()
     created_at = models.DateField(null=True, blank=True)
     updated_at = models.DateField(null=True, blank=True)
+    is_active = models.BooleanField(default = True)
     def __str__(self):
         return self.product_name
 
