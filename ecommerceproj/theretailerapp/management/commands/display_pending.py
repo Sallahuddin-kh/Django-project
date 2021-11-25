@@ -1,11 +1,13 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from theretailerapp.models import Order, Customer,ApprovalStatus
+
 class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('-e', '--email', type=str, help='Define a username prefix', )
         parser.add_argument('-i', '--id', type=str, help='Define a username prefix', )
+
     def handle(self, *args, **kwargs):
         email = kwargs['email']
         id = kwargs['id']

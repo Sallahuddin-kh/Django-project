@@ -1,7 +1,6 @@
 from django.db import models
 import uuid
 from django.urls import reverse
-from django.core.validators import RegexValidator
 from phonenumber_field.modelfields import PhoneNumberField
 
 class Country(models.Model):
