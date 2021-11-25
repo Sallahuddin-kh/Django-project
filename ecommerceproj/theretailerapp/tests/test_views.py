@@ -75,7 +75,6 @@ class TestViews(TestCase):
                          created_at = '2021-11-12',
                          updated_at = '2021-11-12')
         product1.save()
-        product1_id = product1.id
         product2 = Product(product_name = 'test_product_4',
                          description = 'test description_4', 
                          price = 2000, 
