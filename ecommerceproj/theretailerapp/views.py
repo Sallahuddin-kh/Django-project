@@ -200,18 +200,29 @@ def cancel_order(request,id):
         return HttpResponseRedirect('/customer/login')
 
 def filter_order(request):
-    from_date = request.GET.get('from_filter_date')
-    to_date = request.GET.get('to_filter_date')
-    customer_email= request.session['email']
-    customer_obj = Customer.objects.get(email = customer_email)
-    order = Order.objects.filter(customer = customer_obj).filter(placed_at__range=[from_date, to_date])
-    return render(request,'theretailerapp/order_list.html', {'order_list' :  order,
-                                                            'start_date':from_date,
-                                                            'end_date':to_date})
+    if 'email' in request.session:
+        from_date = request.GET.get('from_filter_date')
+        to_date = request.GET.get('to_filter_date')
+        status = request.GET.get('status')
+        customer_email= request.session['email']
+        customer_obj = Customer.objects.get(email = customer_email)
+        order = Order.objects.filter(customer = customer_obj)
+        if(from_date != '' and to_date != ''):
+            order = order.filter(placed_at__range=[from_date, to_date])
+        if status != 'None':
+            order = order.filter(status = status)
+        return render(request,'theretailerapp/order_list.html', {'order_list' :  order,
+                                                                'start_date':from_date,
+                                                                'end_date':to_date})
+    else:
+        return HttpResponseRedirect('/customer/login')
 
 def reset_filter_order(request):
-    customer_email= request.session['email']
-    customer_obj = Customer.objects.get(email = customer_email)
-    order = Order.objects.filter(customer = customer_obj)
-    return render(request,'theretailerapp/order_list.html', {'order_list' :  order})
+    if 'email' in request.session:
+        customer_email= request.session['email']
+        customer_obj = Customer.objects.get(email = customer_email)
+        order = Order.objects.filter(customer = customer_obj)
+        return render(request,'theretailerapp/order_list.html', {'order_list' :  order})
+    else:
+        return HttpResponseRedirect('/customer/login')
 
