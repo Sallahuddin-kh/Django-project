@@ -30,7 +30,7 @@ class TestViews(TestCase):
         approval = ApprovalStatus(approval_status = 'cancelled')
         approval.save()
 
-    def test_item_added_and_removed_to_basket(self):
+    def test_item_added_from_basket(self):
         product = Product(product_name = 'test_product',
                          description = 'test description', 
                          price = 2000, 
@@ -42,14 +42,30 @@ class TestViews(TestCase):
         product.save()   
         self.client.get(reverse('add_to_basket', kwargs={'id': str(product.id)}))
         product = Product.objects.get(id = product.id)
-        assert product.available_quantity == 9
+        if product.available_quantity == 9:
+            assert True, "ITEM REDUCED WHEN ADDED TO BASKET"
+        else:
+            assert False, "ITEM NOT REDUCED WHEN ADDED TO BASKET"
+
+    def test_item_removed_from_basket(self):
+        product = Product(product_name = 'test_product6',
+                         description = 'test description', 
+                         price = 2000, 
+                         available_quantity = 10,
+                         is_active = True,
+                         created_at = '2021-11-12',
+                         updated_at = '2021-11-12')
+        product.save()   
+        self.client.get(reverse('add_to_basket', kwargs={'id': str(product.id)}))
         basket_item = BasketItem.objects.filter(product = product).get()
         self.client.get(reverse('remove_from_basket', kwargs={'id': str(basket_item.id)}))
         product = Product.objects.get(id = product.id)
-        assert product.available_quantity == 10
+        if product.available_quantity == 10:
+            assert True, "ITEM ADDED BACK WHEN REMOVED FROM BASKET"
+        else:
+            assert False, "ITEM NOT ADDED BACK WHEN REMOVED FROM BASKET"
 
-    def test_order_removed_from_basket(self):
-        
+    def test_order_removed(self):
         product = Product(product_name = 'test_product_1',
                          description = 'test description_1', 
                          price = 2000, 
@@ -64,7 +80,11 @@ class TestViews(TestCase):
         product = Product.objects.get(id = product.id)
         self.client.get(reverse('cancel_order', kwargs={'id': 1}))
         product = Product.objects.get(id = product.id)
-        assert product.available_quantity == 20
+        if product.available_quantity == 20:
+            assert True, "QUANTITY FOR ORDER ADDED ITEMS RESTORED"
+        else:
+            assert False, "QUANTITY FOR ORDER ADDED ITEMS NOT RESTORED"
+
 
     def test_non_active_listing(self):
         product1 = Product(product_name = 'test_product_3',
@@ -97,6 +117,6 @@ class TestViews(TestCase):
         for product_item in product_list:
             if product_item.is_active == False:
                 flag = False
-                assert False
+                assert False,"INACTIVE PRODUCTS STILL BEING SHOWN IN THE LISTING"
         if flag:
-            assert True
+            assert True , "INACTIVE PRODUCTS NOT SHOWN IN THE LISTING"
