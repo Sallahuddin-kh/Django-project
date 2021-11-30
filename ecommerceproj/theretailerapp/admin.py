@@ -2,8 +2,8 @@ from django.contrib import admin
 from .models import Basket, BasketItem, Country, Customer, Product, Order, OrderItem
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('customer', 'status' ,'placed_at', 'order_shipping_address','order_price')
-    list_filter = ('customer__email', 'placed_at')
+    list_display = ('customer', 'status' ,'created_at', 'updated_at' , 'order_shipping_address','order_price')
+    list_filter = ('customer__email', 'created_at')
 
 admin.site.register(Country)
 admin.site.register(Customer)

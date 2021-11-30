@@ -149,7 +149,8 @@ def place_order_form(request):
             placed_at = datetime.date.today()
             placed_at_str = placed_at.strftime('%Y-%m-%d')
             order_instance = Order(customer = customer_obj,
-                                    placed_at = placed_at_str,
+                                    created_at = placed_at_str,
+                                    updated_at = placed_at_str,
                                     order_shipping_address = order_address,
                                     order_price = total_price,
                                     status = 'pending')
@@ -208,7 +209,7 @@ def filter_order(request):
         customer_obj = Customer.objects.get(email = customer_email)
         order = Order.objects.filter(customer = customer_obj)
         if(from_date != '' and to_date != ''):
-            order = order.filter(placed_at__range=[from_date, to_date])
+            order = order.filter(created_at__range=[from_date, to_date])
         if status != 'None':
             order = order.filter(status = status)
         return render(request,'theretailerapp/order_list.html', {'order_list' :  order,
