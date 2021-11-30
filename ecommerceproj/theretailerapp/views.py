@@ -195,7 +195,7 @@ def cancel_order(request,id):
         order_items = OrderItem.objects.filter(order = order)
         for item in order_items:
             available_quantity = Product.objects.filter(id = item.product.id).get().available_quantity
-            Product.objects.filter(id = item.product.id).update(available_quantity = available_quantity +1)
+            Product.objects.filter(id = item.product.id).update(available_quantity = available_quantity + 1)
         messages.warning(request,'Order Cancelled')
         return HttpResponseRedirect('/order')
     else:
