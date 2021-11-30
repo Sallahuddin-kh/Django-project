@@ -4,7 +4,16 @@
       <input type="date" id="from_filter_date" name="from_filter_date" value = "{{start_date}}">
       <p>To:</p>
       <input type="date" id="to_filter_date" name="to_filter_date" value = "{{end_date}}"><br><br>
+      <label for="status">Status category:</label>
+      <select name="status" id="status">
+        <option value="pending">pending</option>
+        <option value="approved">approved</option>
+        <option value="cancelled">cancelled</option>
+        <option value="delivered">delivered</option>
+      </select>
+      </br></br>
       <button class="btn btn-primary" type="submit">Submit</button>
+      <a class="btn btn-primary" href="{% url 'filter_order_reset'%}">Reset</a>
     </form>
     <div class="container">
       <h1>Order List</h1>
@@ -22,7 +31,7 @@
               {% for order in order_list %}
                 <tr>
                   <td>{{ order.placed_at }}</td>
-                  <td>{{order.approval_status}}</td>
+                  <td>{{order.status}}</td>
                   <td>{{order.order_shipping_address}}</td>
                   <td>{{order.order_price}}</td>
                   <td> <a href="{% url 'show_order_details' order.id %}">Show Details</a></td>

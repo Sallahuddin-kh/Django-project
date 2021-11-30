@@ -30,12 +30,12 @@
             <p>Total Bill: {{order.order_price}}
         </div>
         <div>
-            <p>Order Approval Status: {{order.approval_status}}
+            <p>Order Approval Status: {{order.status}}
         </div> 
         <div>
             <p>Order Placed At: {{order.placed_at}}
         </div>
-        {%if order.approval_status.approval_status == 'pending'%}
+        {%if order.status == 'pending'%}
             <div>
                 <p>
                     <a class="btn btn-danger" data-toggle="collapse" href="#collapse1" role="button" aria-expanded="false" aria-controls="collapse1">

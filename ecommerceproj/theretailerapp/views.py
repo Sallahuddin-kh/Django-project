@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import ApprovalStatus, Customer, Product, Country, Basket, BasketItem, Order, OrderItem
+from .models import  Customer, Product, Country, Basket, BasketItem, Order, OrderItem
 from django.views import generic
 from django.http import HttpResponseRedirect
 from django.contrib import messages
@@ -148,12 +148,11 @@ def place_order_form(request):
             order_address = request.POST.get("shipping_address")
             placed_at = datetime.date.today()
             placed_at_str = placed_at.strftime('%Y-%m-%d')
-            approval_status = ApprovalStatus.objects.get(approval_status = 'pending')
             order_instance = Order(customer = customer_obj,
-                                    approval_status = approval_status,
                                     placed_at = placed_at_str,
                                     order_shipping_address = order_address,
-                                    order_price = total_price)
+                                    order_price = total_price,
+                                    status = 'pending')
             order_instance.save()
             for item in basket_items:
                 product = item.product
@@ -189,8 +188,7 @@ def show_order_details(request,id):
 
 def cancel_order(request,id):
     if 'email' in request.session:
-        approval_status = ApprovalStatus.objects.get(approval_status = 'cancelled')
-        Order.objects.filter(id = id).update(approval_status = approval_status)
+        Order.objects.filter(id = id).update(status = 'cancelled')
         order = Order.objects.filter(id = id).get()
         order_items = OrderItem.objects.filter(order = order)
         for item in order_items:
@@ -210,3 +208,10 @@ def filter_order(request):
     return render(request,'theretailerapp/order_list.html', {'order_list' :  order,
                                                             'start_date':from_date,
                                                             'end_date':to_date})
+
+def reset_filter_order(request):
+    customer_email= request.session['email']
+    customer_obj = Customer.objects.get(email = customer_email)
+    order = Order.objects.filter(customer = customer_obj)
+    return render(request,'theretailerapp/order_list.html', {'order_list' :  order})
+
