@@ -12,9 +12,7 @@
                 <th>Available quantity</th>
                 <th>Created At</th>
                 <th>Updated At</th>
-                {%if 'first_name' in request.session%}
-                  <th>Add to Basket</th>
-                {%endif%}
+                <th>Add to Basket</th>
               </tr>
               {% for product in product_list %}
                 <tr>
@@ -24,9 +22,7 @@
                   <td>{{product.available_quantity}}</td>
                   <td>{{product.created_at}}</td>
                   <td>{{product.updated_at}}</td>
-                  {%if 'first_name' in request.session%}
-                    <td> <a href="{% url 'add_to_basket' product.id %}">Add</a></td>
-                  {%endif%}
+                  <td> <a href="{% url 'add_to_basket' product.id %}">Add</a></td>
                 </tr>
               {% endfor %}
             </table>

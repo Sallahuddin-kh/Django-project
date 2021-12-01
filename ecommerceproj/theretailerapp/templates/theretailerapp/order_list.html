@@ -27,14 +27,16 @@
                 <th>Status</th>
                 <th>Address</th>
                 <th>Total Bill</th>
+                <th>Updated at</th>
                 <th>Operations</th>
               </tr>
               {% for order in order_list %}
                 <tr>
-                  <td>{{ order.placed_at }}</td>
+                  <td>{{ order.created_at }}</td>
                   <td>{{order.status}}</td>
                   <td>{{order.order_shipping_address}}</td>
                   <td>{{order.order_price}}</td>
+                  <td>{{order.updated_at}}</td>
                   <td> <a href="{% url 'show_order_details' order.id %}">Show Details</a></td>
                 </tr>
               {% endfor %}
