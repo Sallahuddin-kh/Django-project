@@ -33,7 +33,7 @@
             <p>Order Approval Status: {{order.status}}
         </div> 
         <div>
-            <p>Order Placed At: {{order.placed_at}}
+            <p>Order Placed At: {{order.created_at}}
         </div>
         {%if order.status == 'pending'%}
             <div>

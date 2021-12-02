@@ -9,14 +9,14 @@
                     <th>Product name</th>
                     <th>Description</th>
                     <th>Price</th>
-                    <th>Available quantity</th>
+                    <th>Quantity</th>
                   </tr>
                   {% for product in items %}
                     <tr>
                       <td>{{ product.product.product_name }}</td>
                       <td>{{product.product.description}}</td>
                       <td>{{product.product.price}}</td>
-                      <td>{{product.product.available_quantity}}</td>
+                      <td>{{product.quantity}}</td>
                     </tr>
                   {% endfor %}
                 </table>

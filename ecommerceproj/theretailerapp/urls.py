@@ -13,10 +13,12 @@ urlpatterns = [
     path('basket/remove/<int:id>', views.remove_product_from_basket, name='remove_from_basket'),
     path('basket/remove/<uuid:id>', views.remove_product_from_session_basket, name='remove_from_basket_session'),
     path('basket/getsession', views.convert_sessionbasket_to_tablebasket, name='convert_sessionbasket_to_tablebasket'),
+    path('basket/increaseamount/<uuid:id>', views.increase_basket_item_quantity, name='increase_basket_item_quantity'),
+    path('basket/decreaseamount/<uuid:id>', views.decrease_basket_item_quantity, name='decrease_basket_item_quantity'),
     path('order/place',views.place_order_form,name = 'place_order_form'),
     path('order' , views.show_customer_orders, name = 'show_customer_orders'),
     path('order/details/<int:id>', views.show_order_details,name = 'show_order_details'),
     path('order/cancel/<int:id>' , views.cancel_order , name = 'cancel_order'),
     path('order/filter' , views.filter_order , name = 'filter_order'),
-    path('order/filter/reset', views.reset_filter_order, name = 'filter_order_reset')
+    path('order/filter/reset', views.show_customer_orders, name = 'filter_order_reset')
 ]
