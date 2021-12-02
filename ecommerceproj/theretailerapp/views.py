@@ -10,7 +10,15 @@ class CustomerListView(generic.ListView):
     model = Customer
 
 def product_list_view(request):
-    products = Product.objects.filter(is_active = True)
+    product_list = Product.objects.filter(is_active = True)
+    page = request.GET.get('page', 1)
+    paginator = Paginator(product_list, 5)
+    try:
+        products = paginator.page(page)
+    except PageNotAnInteger:
+        products = paginator.page(1)
+    except EmptyPage:
+        products = paginator.page(paginator.num_pages)
     context = {'product_list':products}
     return render(request, 'theretailerapp/product_list.html', context)
 
