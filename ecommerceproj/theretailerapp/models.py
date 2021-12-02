@@ -66,7 +66,6 @@ class Order(models.Model):
         super().save(*args, **kwargs)
         self.updated_at = updated_at_str
         
-
 class OrderItem(models.Model):
      product = models.ForeignKey(Product,on_delete=models.CASCADE)
      order = models.ForeignKey(Order, on_delete=models.CASCADE)
