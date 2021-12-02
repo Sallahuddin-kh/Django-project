@@ -5,7 +5,7 @@
       <div class="row">
         {% block content %}
           {% if basket_message%}
-            <a href = "{% url 'convert_sessionbasket_to_tablebasket'%}"> Click Here if you want to replace old basket with new</a>
+            <a href = "{% url 'convert_sessionbasket_to_tablebasket'%}"> Click Here if you want to merge old basket with new</a>
           {%endif%}
           {% if items %}
             <table>

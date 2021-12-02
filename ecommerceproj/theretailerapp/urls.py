@@ -19,6 +19,6 @@ urlpatterns = [
     path('order' , views.show_customer_orders, name = 'show_customer_orders'),
     path('order/details/<int:order_id>', views.show_order_details,name = 'show_order_details'),
     path('order/cancel/<int:order_id>' , views.cancel_order , name = 'cancel_order'),
-    path('order/filter' , views.filter_order , name = 'filter_order'),
+    path('order/filter' , views.filter_orders , name = 'filter_order'),
     path('order/filter/reset', views.show_customer_orders, name = 'filter_order_reset')
 ]

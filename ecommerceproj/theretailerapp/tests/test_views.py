@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
-from theretailerapp.models import BasketItem , Product, Customer, Country, ApprovalStatus
+from theretailerapp.models import BasketItem , Product, Customer, Country
 
 class TestViews(TestCase):
     basket_instance = []
@@ -25,10 +25,6 @@ class TestViews(TestCase):
             "first_name": customer.first_name,
         })
         s.save()
-        approval = ApprovalStatus(approval_status = 'pending')
-        approval.save()
-        approval = ApprovalStatus(approval_status = 'cancelled')
-        approval.save()
 
     def test_item_added_from_basket(self):
         product = Product(product_name = 'test_product',
@@ -40,7 +36,7 @@ class TestViews(TestCase):
                          updated_at = '2021-11-12')
         
         product.save()   
-        self.client.get(reverse('add_to_basket', kwargs={'id': str(product.id)}))
+        self.client.get(reverse('add_to_basket', kwargs={'product_id': str(product.id)}))
         product = Product.objects.get(id = product.id)
         if product.available_quantity == 9:
             assert True, "ITEM REDUCED WHEN ADDED TO BASKET"
@@ -56,9 +52,9 @@ class TestViews(TestCase):
                          created_at = '2021-11-12',
                          updated_at = '2021-11-12')
         product.save()   
-        self.client.get(reverse('add_to_basket', kwargs={'id': str(product.id)}))
+        self.client.get(reverse('add_to_basket', kwargs={'product_id': str(product.id)}))
         basket_item = BasketItem.objects.filter(product = product).get()
-        self.client.get(reverse('remove_from_basket', kwargs={'id': str(basket_item.id)}))
+        self.client.get(reverse('remove_from_basket', kwargs={'basketitem_id': str(basket_item.id)}))
         product = Product.objects.get(id = product.id)
         if product.available_quantity == 10:
             assert True, "ITEM ADDED BACK WHEN REMOVED FROM BASKET"
@@ -74,11 +70,11 @@ class TestViews(TestCase):
                          created_at = '2021-11-12',
                          updated_at = '2021-11-12')
         product.save()   
-        self.client.get(reverse('add_to_basket', kwargs={'id': str(product.id)}))
-        self.client.get(reverse('add_to_basket', kwargs={'id': str(product.id)}))
+        self.client.get(reverse('add_to_basket', kwargs={'product_id': str(product.id)}))
+        self.client.get(reverse('add_to_basket', kwargs={'product_id': str(product.id)}))
         self.client.post(reverse('place_order_form'), {'shipping_address': 'House Test'})
         product = Product.objects.get(id = product.id)
-        self.client.get(reverse('cancel_order', kwargs={'id': 1}))
+        self.client.get(reverse('cancel_order', kwargs={'order_id': 1}))
         product = Product.objects.get(id = product.id)
         if product.available_quantity == 20:
             assert True, "QUANTITY FOR ORDER ADDED ITEMS RESTORED"
