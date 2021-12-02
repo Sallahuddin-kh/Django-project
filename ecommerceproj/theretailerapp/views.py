@@ -90,8 +90,8 @@ def customer_sign_out(request):
     messages.success(request, 'Signed Out Successfully')
     return HttpResponseRedirect('/product')
 
-def add_product_to_basket(request,id):
-    product_obj = Product.objects.get(id = id)
+def add_product_to_basket(request,product_id):
+    product_obj = Product.objects.get(id = product_id)
     available_quantity = product_obj.available_quantity
     if available_quantity <= 0:
         msg = product_obj.product_name + ' Out of stock. Product not added to basket'
@@ -111,13 +111,13 @@ def add_product_to_basket(request,id):
         else:
             basket_item = BasketItem(basket = basket,product = product_obj,quantity = 1)
             basket_item.save()
-        Product.objects.filter(id = id).update(available_quantity = available_quantity - 1)
+        Product.objects.filter(id = product_id).update(available_quantity = available_quantity - 1)
         msg = product_obj.product_name + ' Added to basket successfully'
         messages.success(request, msg)
         return HttpResponseRedirect('/product')
     else:
         cart = request.session.get('cart')
-        id_s  = str(id)
+        id_s  = str(product_id)
         if cart:
             quantity = cart.get(id_s)
             if quantity:
@@ -127,7 +127,7 @@ def add_product_to_basket(request,id):
         else:
             cart = {}
             cart[id_s] = 1
-        Product.objects.filter(id = id).update(available_quantity = available_quantity - 1)
+        Product.objects.filter(id = product_id).update(available_quantity = available_quantity - 1)
         request.session['cart'] = cart
         msg = product_obj.product_name + ' Added to basket successfully'
         messages.success(request, msg)
@@ -154,33 +154,34 @@ def customer_basket(request):
             return render(request,'theretailerapp/basket_list.html',{'items':products})
         return render(request,'theretailerapp/basket_list.html')
 
-def remove_product_from_basket(request,id):
+def remove_product_from_basket(request,basketitem_id):
     if 'email' in request.session:
-        product_name = BasketItem.objects.filter(id=id).get().product.product_name
-        product_id = BasketItem.objects.filter(id=id).get().product.id
-        product_quantity = BasketItem.objects.filter(id=id).get().quantity
+        basket_item= BasketItem.objects.filter(id=basketitem_id).get()
+        product_name = basket_item.product.product_name
+        product_id = basket_item.product.id
+        product_quantity = basket_item.quantity
         available_quantity = Product.objects.filter(id = product_id).get().available_quantity
         Product.objects.filter(id = product_id).update(available_quantity = available_quantity +product_quantity)
         msg = product_name + ' removed from basket successfully'
-        BasketItem.objects.filter(id=id).delete()
+        BasketItem.objects.filter(id=basketitem_id).delete()
         messages.success(request, msg)
         return HttpResponseRedirect('/basket')
     else:
         return HttpResponseRedirect('/customer/login')
 
-def remove_product_from_session_basket(request,id):
-    product_obj = Product.objects.get(id = id)
+def remove_product_from_session_basket(request,product_id):
+    product_obj = Product.objects.get(id = product_id)
     available_quantity = product_obj.available_quantity
     cart = request.session.get('cart')
-    id_s  = str(id)
+    id_s  = str(product_id)
     if cart:
         quantity = cart.get(id_s)
         cart.pop(id_s)
-        Product.objects.filter(id = id).update(available_quantity = available_quantity + quantity)
+        Product.objects.filter(id = product_id).update(available_quantity = available_quantity + quantity)
     request.session['cart'] = cart
     return HttpResponseRedirect('/basket')
 
-def convert_sessionbasket_to_tablebasket(request):#
+def convert_sessionbasket_to_tablebasket(request):
     if 'email' in request.session:
         customer_email= request.session['email']
         customer_obj = Customer.objects.get(email = customer_email)
@@ -265,20 +266,20 @@ def show_customer_orders(request):
     else:
         return HttpResponseRedirect('/customer/login')
 
-def show_order_details(request,id):
+def show_order_details(request,order_id):
     if 'email' in request.session:
-        order_items = OrderItem.objects.filter(order = id)
-        order = Order.objects.get(id = id)
+        order_items = OrderItem.objects.filter(order = order_id)
+        order = Order.objects.get(id = order_id)
         return render(request,'theretailerapp/order_details.html', {'product_list' :  order_items, 'order': order})
     else:
         return HttpResponseRedirect('/customer/login')
 
-def cancel_order(request,id):
+def cancel_order(request,order_id):
     if 'email' in request.session:
         updated_at = datetime.datetime.now()
         updated_at_str = updated_at.strftime('%Y-%m-%d %H:%M:%S')
-        Order.objects.filter(id = id).update(status = 'cancelled', updated_at = updated_at_str)
-        order = Order.objects.filter(id = id).get()
+        Order.objects.filter(id = order_id).update(status = 'cancelled', updated_at = updated_at_str)
+        order = Order.objects.filter(id = order_id).get()
         order_items = OrderItem.objects.filter(order = order)
         for item in order_items:
             available_quantity = Product.objects.filter(id = item.product.id).get().available_quantity
@@ -315,12 +316,12 @@ def filter_order(request):
     else:
         return HttpResponseRedirect('/customer/login')
 
-def increase_basket_item_quantity(request,id):
-    add_product_to_basket(request,id)
+def increase_basket_item_quantity(request,product_id):
+    add_product_to_basket(request,product_id)
     return HttpResponseRedirect('/basket')
 
-def decrease_basket_item_quantity(request,id):
-    product_obj = Product.objects.get(id = id)
+def decrease_basket_item_quantity(request,product_id):
+    product_obj = Product.objects.get(id = product_id)
     if 'email' in request.session:
         customer_email= request.session['email']
         customer_obj = Customer.objects.get(email = customer_email)
@@ -333,7 +334,7 @@ def decrease_basket_item_quantity(request,id):
             BasketItem.objects.filter(basket = basket).filter(product = product_obj).update(quantity = quantity)
     else:
         cart = request.session.get('cart')
-        id_s  = str(id)
+        id_s  = str(product_id)
         if cart:
             quantity = cart.get(id_s)
             if quantity > 1:
@@ -341,5 +342,5 @@ def decrease_basket_item_quantity(request,id):
             else:
                 cart.pop(id_s)
         request.session['cart'] = cart
-    Product.objects.filter(id = id).update(available_quantity = product_obj.available_quantity + 1)
+    Product.objects.filter(id = product_id).update(available_quantity = product_obj.available_quantity + 1)
     return HttpResponseRedirect('/basket')
