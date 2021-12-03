@@ -19,6 +19,9 @@
     <div class="container">
       <h1>Order List</h1>
       <div class="row">
+      {%if status != 'None'%}
+        <p>Showing your {{status}} orders</p>
+      {%endif%}
         {% block content %}
           {% if order_list %}
             <table>
@@ -44,7 +47,7 @@
             {% if order_list.has_other_pages %}
               <ul class="pagination">
                 {% if order_list.has_previous %}
-                  <li><a href="?page={{ order_list.previous_page_number }}">&laquo;</a></li>
+                  <li><a href="?from_filter_date={{start_date}}&to_filter_date={{end_date}}&status={{status}}&page={{ order_list.previous_page_number }}">&laquo;</a></li>
                 {% else %}
                   <li class="disabled"><span>&laquo;</span></li>
                 {% endif %}
@@ -52,11 +55,11 @@
                   {% if order_list.number == i %}
                     <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
                   {% else %}
-                    <li><a href="?page={{ i }}">{{ i }}</a></li>
+                    <li><a href="?from_filter_date={{start_date}}&to_filter_date={{end_date}}&status={{status}}&page={{ i }}">{{ i }}</a></li>
                   {% endif %}
                 {% endfor %}
                 {% if order_list.has_next %}
-                  <li><a href="?page={{ order_list.next_page_number }}">&raquo;</a></li>
+                  <li><a href="?from_filter_date={{start_date}}&to_filter_date={{end_date}}&status={{status}}&page={{ order_list.next_page_number }}">&raquo;</a></li>
                 {% else %}
                   <li class="disabled"><span>&raquo;</span></li>
                 {% endif %}

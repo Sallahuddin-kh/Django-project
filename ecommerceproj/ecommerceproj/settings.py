@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'ecommerceproj.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'djangoapp2', 
+        'NAME': 'djangoapp3', 
         'USER': 'tesla', 
         'PASSWORD': '12345678',
         'HOST': '127.0.0.1', 

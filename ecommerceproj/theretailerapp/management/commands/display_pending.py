@@ -5,8 +5,8 @@ from theretailerapp.models import Order, Customer,ApprovalStatus
 class Command(BaseCommand):
 
     def add_arguments(self, parser):
-        parser.add_argument('-e', '--email', type=str, help='Define a username prefix', )
-        parser.add_argument('-i', '--id', type=str, help='Define a username prefix', )
+        parser.add_argument('-e', '--email', type=str, help='Define a customer email', )
+        parser.add_argument('-i', '--id', type=str, help='Define a customer id', )
 
     def handle(self, *args, **kwargs):
         email = kwargs['email']

@@ -2,6 +2,8 @@ from django.db import models
 import uuid
 from django.urls import reverse
 from phonenumber_field.modelfields import PhoneNumberField
+from django.utils.translation import gettext_lazy as _
+from datetime import datetime
 
 class Country(models.Model):
     country_name = models.CharField(max_length=200, help_text='Enter a Country name')
@@ -42,21 +44,28 @@ class Basket(models.Model):
 class BasketItem(models.Model):
     basket = models.ForeignKey(Basket,on_delete=models.CASCADE)
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
-    quantity = models.IntegerField(default = 0)
-
-class ApprovalStatus(models.Model):
-    approval_status = models.CharField(max_length=200, help_text='Enter the approval status')
-
-    def __str__(self):
-        return self.approval_status
+    quantity = models.IntegerField(default = 1)
 
 class Order(models.Model):
+    class Status(models.TextChoices):
+        PENDING = 'pending', _('pending')
+        DELIVERED = 'delivered', _('delivered')
+        CANCELLED = 'cancelled', _('cancelled')
+        APPROVED = 'approved', _('approved')
+
+    status = models.CharField(max_length = 20, choices = Status.choices, default= Status.PENDING)
     customer = models.ForeignKey(Customer,on_delete=models.CASCADE)
-    approval_status = models.ForeignKey('ApprovalStatus', on_delete=models.SET_NULL, null=True)
-    placed_at = models.DateField(null=True, blank=True)
+    created_at = models.DateTimeField(null=True, blank=True)
     order_shipping_address = models.CharField(max_length=200, help_text='Shipping Address')
     order_price = models.FloatField()
+    updated_at = models.DateTimeField(null=True, blank=True)
 
+    def save(self, *args, **kwargs):
+        updated_at = datetime.now()
+        updated_at_str = updated_at.strftime('%Y-%m-%d %H:%M:%S')
+        super().save(*args, **kwargs)
+        self.updated_at = updated_at_str
+        
 class OrderItem(models.Model):
      product = models.ForeignKey(Product,on_delete=models.CASCADE)
      order = models.ForeignKey(Order, on_delete=models.CASCADE)
