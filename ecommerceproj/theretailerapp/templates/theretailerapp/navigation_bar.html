@@ -1,11 +1,14 @@
 <div class="topnav">
   {%if 'first_name' in request.session%}
     <p>Hello {{request.session.first_name}}</p>
-    <a href="customer/logout">Sign Out</a>
+    <a href="/customer/logout">Sign Out</a>
     <a href="/product">Products</a>
+    <a href="/basket">Basket</a>
+    <a href="/order">My Orders</a>
   {%else%}
     <a href="/customer/create">Sign Up</a>
     <a href="/customer/login">Log In</a>
     <a href="/product">Products</a>
+    <a href="/basket">Basket</a>
   {%endif%}
 </div>

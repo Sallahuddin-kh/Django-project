@@ -1,0 +1,57 @@
+    {% include 'theretailerapp/generic.html' %}
+    <div class="container">
+      <h1>Ordered Products</h1>
+      <div class="row">
+        {% block content %}
+          {% if product_list %}
+            <table>
+              <tr>
+                <th>Product name</th>
+                <th>Description</th>
+                <th>Price</th>
+              </tr>
+              {% for product in product_list %}
+                <tr>
+                  <td>{{ product.product.product_name }}</td>
+                  <td>{{product.product.description}}</td>
+                  <td>{{product.product.price}}</td>
+                </tr>
+              {% endfor %}
+            </table>
+          {% else %}
+            <p>Currently order products cannot be viewed please try again later.</p>
+          {% endif %} 
+        {% endblock %}
+        <div>
+            <p>Shipping Address: {{order.order_shipping_address}}
+        </div>
+        <div>
+            <p>Total Bill: {{order.order_price}}
+        </div>
+        <div>
+            <p>Order Approval Status: {{order.status}}
+        </div> 
+        <div>
+            <p>Order Placed At: {{order.created_at}}
+        </div>
+        {%if order.status == 'pending'%}
+            <div>
+                <p>
+                    <a class="btn btn-danger" data-toggle="collapse" href="#collapse1" role="button" aria-expanded="false" aria-controls="collapse1">
+                        Cancel Order
+                    </a>
+                </p>
+                <div class="collapse" id="collapse1">
+                    <div class="card card-body">
+                            <p> Are you sure</p>
+                    </div>
+                    <a class = "btn btn-danger" href="{% url 'cancel_order' order.id %}" >
+                        CANCEL
+                    </a>
+                </div>
+            </div>    
+      </div>
+      {%endif%}
+    </div>
+  </body>
+</html>

@@ -1,0 +1,72 @@
+    {% include 'theretailerapp/generic.html' %}
+    <form method = "get" action = "{% url 'filter_order'%}">
+      <p>Filter from: </p>
+      <input type="date" id="from_filter_date" name="from_filter_date" value = "{{start_date}}">
+      <p>To:</p>
+      <input type="date" id="to_filter_date" name="to_filter_date" value = "{{end_date}}"><br><br>
+      <label for="status">Status category:</label>
+      <select name="status" id="status">
+        <option value="None" selected>All</option>
+        <option value="pending">pending</option>
+        <option value="approved">approved</option>
+        <option value="cancelled">cancelled</option>
+        <option value="delivered">delivered</option>
+      </select>
+      </br></br>
+      <button class="btn btn-primary" type="submit">Submit</button>
+      <a class="btn btn-primary" href="{% url 'filter_order_reset'%}">Reset</a>
+    </form>
+    <div class="container">
+      <h1>Order List</h1>
+      <div class="row">
+        {% block content %}
+          {% if order_list %}
+            <table>
+              <tr>
+                <th>Order Date</th>
+                <th>Status</th>
+                <th>Address</th>
+                <th>Total Bill</th>
+                <th>Updated at</th>
+                <th>Operations</th>
+              </tr>
+              {% for order in order_list %}
+                <tr>
+                  <td>{{ order.created_at }}</td>
+                  <td>{{order.status}}</td>
+                  <td>{{order.order_shipping_address}}</td>
+                  <td>{{order.order_price}}</td>
+                  <td>{{order.updated_at}}</td>
+                  <td> <a href="{% url 'show_order_details' order.id %}">Show Details</a></td>
+                </tr>
+              {% endfor %}
+            </table>
+            {% if order_list.has_other_pages %}
+              <ul class="pagination">
+                {% if order_list.has_previous %}
+                  <li><a href="?page={{ order_list.previous_page_number }}">&laquo;</a></li>
+                {% else %}
+                  <li class="disabled"><span>&laquo;</span></li>
+                {% endif %}
+                {% for i in order_list.paginator.page_range %}
+                  {% if order_list.number == i %}
+                    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                  {% else %}
+                    <li><a href="?page={{ i }}">{{ i }}</a></li>
+                  {% endif %}
+                {% endfor %}
+                {% if order_list.has_next %}
+                  <li><a href="?page={{ order_list.next_page_number }}">&raquo;</a></li>
+                {% else %}
+                  <li class="disabled"><span>&raquo;</span></li>
+                {% endif %}
+              </ul>
+            {% endif %}
+          {% else %}
+            <p>There are no orders.</p>
+          {% endif %} 
+        {% endblock %}
+      </div>
+    </div>
+  </body>
+</html>
