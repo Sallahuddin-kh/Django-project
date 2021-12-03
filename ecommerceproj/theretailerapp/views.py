@@ -5,15 +5,27 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 import datetime
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django_hint import RequestType
+import uuid
 
 class CustomerListView(generic.ListView):
+    """
+    List View Class for the customer list.
+    """
     model = Customer
 
-def get_customer_object_from_session(request):
+def get_customer_object_from_session(request:RequestType):
+    """
+    Gets the customer object by using email stored in session.
+    """
     customer_email= request.session['email']
     return Customer.objects.get(email = customer_email)
 
-def product_list_view(request):
+def product_list_view(request:RequestType):
+    """
+    List View for products. Return only active products
+    Responses with the paginated list.
+    """
     product_list = Product.objects.filter(is_active = True)
     page = request.GET.get('page', 1)
     paginator = Paginator(product_list, 5)
@@ -26,7 +38,11 @@ def product_list_view(request):
     context = {'product_list':products}
     return render(request, 'theretailerapp/product_list.html', context)
 
-def insert_customer(request):
+def insert_customer(request:RequestType):
+    """
+    Customer Sign-up method. Responses with the success message if customer inserted.
+    Otherwise returns error message.
+    """
     if 'email' in request.session:
         messages.warning(request,'Customer Already logged In. Sign Out to proceed')
         return HttpResponseRedirect('/product')
@@ -69,7 +85,11 @@ def insert_customer(request):
         return HttpResponseRedirect('/product')
     return render(request,'theretailerapp/customer_signup_form.html', {'countries':country},)
 
-def login_customer(request):
+def login_customer(request:RequestType):
+    """
+    Customer Login method returns success message if customer insertion successful.
+    Stores the necessary customer details in the session.
+    """
     if 'email' in request.session:
         messages.warning(request,'Customer Already logged In')
         return HttpResponseRedirect('/product')
@@ -88,13 +108,20 @@ def login_customer(request):
             messages.error(request,'Incorrect email')
     return render(request,'theretailerapp/customer_signin_form.html')
 
-def customer_sign_out(request):
+def customer_sign_out(request:RequestType):
+    """
+    Customer Signout. Removes the details from the session.
+    """
     del request.session['email']
     del request.session['first_name']
     messages.success(request, 'Signed Out Successfully')
     return HttpResponseRedirect('/product')
 
-def add_product_to_basket(request,product_id):
+def add_product_to_basket(request,product_id:uuid):
+    """
+    Adds products in the db basket if customer loggedin. Otherwise saves the product
+    in the session.
+    """
     product_obj = Product.objects.get(id = product_id)
     available_quantity = product_obj.available_quantity
     if available_quantity <= 0:
@@ -136,7 +163,11 @@ def add_product_to_basket(request,product_id):
         messages.success(request, msg)
         return HttpResponseRedirect('/product')
 
-def customer_basket(request):
+def customer_basket(request:RequestType):
+    """
+    Retrieves customer basket from db if customer is logged in. Otherwise retrieves from
+    the session.
+    """
     cart = request.session.get('cart')
     if 'email' in request.session:
         basket_message = False
@@ -155,7 +186,10 @@ def customer_basket(request):
             return render(request,'theretailerapp/basket_list.html',{'items':products})
         return render(request,'theretailerapp/basket_list.html')
 
-def remove_product_from_basket(request,basketitem_id):
+def remove_product_from_basket(request:RequestType,basketitem_id:int):
+    """
+    Removes the product from the db basket.
+    """
     if 'email' in request.session:
         basket_item= BasketItem.objects.filter(id=basketitem_id).get()
         product_name = basket_item.product.product_name
@@ -170,7 +204,10 @@ def remove_product_from_basket(request,basketitem_id):
     else:
         return HttpResponseRedirect('/customer/login')
 
-def remove_product_from_session_basket(request,product_id):
+def remove_product_from_session_basket(request:RequestType,product_id:uuid):
+    """
+    Removes the product from the user basket store in session.
+    """
     product_obj = Product.objects.get(id = product_id)
     available_quantity = product_obj.available_quantity
     cart = request.session.get('cart')
@@ -182,7 +219,11 @@ def remove_product_from_session_basket(request,product_id):
     request.session['cart'] = cart
     return HttpResponseRedirect('/basket')
 
-def convert_sessionbasket_to_tablebasket(request):
+def convert_sessionbasket_to_tablebasket(request:RequestType):
+    """
+    Function called when the customer wants to merge the session basket and 
+    the basket stored in the db.
+    """
     if 'email' in request.session:
         customer_obj = get_customer_object_from_session(request)
         if not Basket.objects.filter(customer = customer_obj).exists():
@@ -205,14 +246,22 @@ def convert_sessionbasket_to_tablebasket(request):
             del request.session['cart']
     return HttpResponseRedirect('/basket')
 
-def calculate_basket_total_price(basket_items):
+def calculate_basket_total_price(basket_items:RequestType):
+    """
+    Function to sum up the total price in the basket_item of products.
+    """
     total_price = 0
     for item in basket_items:
         for i in range(item.quantity):
             total_price = total_price + item.product.price
     return total_price
 
-def place_order_form(request):
+def place_order_form(request:RequestType):
+    """
+    Places the order. Adds the product from the basket into the order.
+    A user can have one basket associated to him in db. But order can 
+    be multiple.
+    """
     if 'email' in request.session:
         customer_obj = get_customer_object_from_session(request)
         basket = Basket.objects.filter(customer = customer_obj).get()
@@ -246,7 +295,10 @@ def place_order_form(request):
     else:
         return HttpResponseRedirect('/customer/login')
 
-def show_customer_orders(request):
+def show_customer_orders(request:RequestType):
+    """
+    Show the order of a customer in paginated form.
+    """
     if 'email' in request.session:
         customer_obj = get_customer_object_from_session(request)
         order_list = Order.objects.filter(customer = customer_obj)
@@ -266,7 +318,10 @@ def show_customer_orders(request):
     else:
         return HttpResponseRedirect('/customer/login')
 
-def show_order_details(request,order_id):
+def show_order_details(request:RequestType,order_id:int):
+    """
+    Returns the details of order.
+    """
     if 'email' in request.session:
         order_items = OrderItem.objects.filter(order = order_id)
         order = Order.objects.get(id = order_id)
@@ -274,7 +329,11 @@ def show_order_details(request,order_id):
     else:
         return HttpResponseRedirect('/customer/login')
 
-def cancel_order(request,order_id):
+def cancel_order(request:RequestType,order_id:int):
+    """
+    Cancel order changed the status field in order to cancelled. Also updates
+    the updated_at field to current datetime.
+    """
     if 'email' in request.session:
         updated_at = datetime.datetime.now()
         updated_at_str = updated_at.strftime('%Y-%m-%d %H:%M:%S')
@@ -289,7 +348,10 @@ def cancel_order(request,order_id):
     else:
         return HttpResponseRedirect('/customer/login')
 
-def filter_orders(request):
+def filter_orders(request:RequestType):
+    """
+    Returns the order according the filter option in query.
+    """
     if 'email' in request.session:
         from_date = request.GET.get('from_filter_date')
         to_date = request.GET.get('to_filter_date')
@@ -315,11 +377,17 @@ def filter_orders(request):
     else:
         return HttpResponseRedirect('/customer/login')
 
-def increase_basket_item_quantity(request,product_id):
+def increase_basket_item_quantity(request:RequestType,product_id:uuid):
+    """
+    Increases the basket item quantity by one. Either in db or session.
+    """
     add_product_to_basket(request,product_id)
     return HttpResponseRedirect('/basket')
 
-def decrease_basket_item_quantity(request,product_id):
+def decrease_basket_item_quantity(request:RequestType,product_id:uuid):
+    """
+    Decreases the basket item quantity by one. Either in db or session.
+    """
     product_obj = Product.objects.get(id = product_id)
     if 'email' in request.session:
         customer_obj = get_customer_object_from_session(request)
