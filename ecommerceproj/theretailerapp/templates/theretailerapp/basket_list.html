@@ -1,27 +1,50 @@
     {% include 'theretailerapp/generic.html' %}
+    {% load cart %}
     <div class="container">
       <h1>Basket</h1>
       <div class="row">
         {% block content %}
+          {% if basket_message%}
+            <a href = "{% url 'convert_sessionbasket_to_tablebasket'%}"> Click Here if you want to merge old basket with new</a>
+          {%endif%}
           {% if items %}
             <table>
               <tr>
                 <th>Product name</th>
                 <th>Description</th>
                 <th>Price</th>
-                <th>Available quantity</th>
-                <th>Remove</th>
+                <th>Quantity</th>
+                <th>Remove Order</th>
               </tr>
-              {% for product in items %}
-                <tr>
-                  <td>{{ product.product.product_name }}</td>
-                  <td>{{product.product.description}}</td>
-                  <td>{{product.product.price}}</td>
-                  <td>{{product.product.available_quantity}}</td>
-                  <td> <a href="{% url 'remove_from_basket' product.id %}">Remove</a></td>
-                </tr>
-              {% endfor %}
-            </table>
+              {%if 'first_name' in request.session%}
+                {% for product in items %}
+                  <tr>
+                    <td>{{product.product.product_name}}</td>
+                    <td>{{product.product.description}}</td>
+                    <td>{{product.product.price}}</td>
+                    <td><a href = "{% url 'decrease_basket_item_quantity' product.product.id %}">-</a> {{product.quantity}} <a href = "{% url 'increase_basket_item_quantity' product.product.id %}" >+</a></td>
+                    <td> <a href="{% url 'remove_from_basket' product.id %}">Remove</a></td>
+                  </tr>
+                {% endfor %}
+                </table>
+                <div>
+                    <a class="btn btn-primary btn-lg btn-block" href = "order/place">Checkout Order</a>
+                </div>
+              {%else%}
+                {% for product in items %}
+                  <tr>
+                    <td>{{product.product_name }}</td>
+                    <td>{{product.description}}</td>
+                    <td>{{product.price}}</td>
+                    <td><a href = "{% url 'decrease_basket_item_quantity' product.id %}">-</a> {{product|cart_quantity:request.session.cart}} <a href = "{% url 'increase_basket_item_quantity' product.id %}">+</a></td>
+                    <td> <a href="{% url 'remove_from_basket_session' product.id %}">Remove1</a></td>
+                  </tr>
+                {% endfor %}
+                </table>
+                <div>
+                    <a class="btn btn-primary btn-lg btn-block" href = "customer/login">Log In Checkout Order</a>
+                </div>
+              {%endif%}
           {% else %}
             <p>There are no products in basket.</p>
           {% endif %} 

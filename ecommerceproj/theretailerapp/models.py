@@ -1,8 +1,9 @@
 from django.db import models
 import uuid
 from django.urls import reverse
-from django.core.validators import RegexValidator
 from phonenumber_field.modelfields import PhoneNumberField
+from django.utils.translation import gettext_lazy as _
+from datetime import datetime
 
 class Country(models.Model):
     country_name = models.CharField(max_length=200, help_text='Enter a Country name')
@@ -33,6 +34,7 @@ class Product(models.Model):
     available_quantity = models.PositiveIntegerField()
     created_at = models.DateField(null=True, blank=True)
     updated_at = models.DateField(null=True, blank=True)
+    is_active = models.BooleanField(default = True)
     def __str__(self):
         return self.product_name
 
@@ -42,4 +44,28 @@ class Basket(models.Model):
 class BasketItem(models.Model):
     basket = models.ForeignKey(Basket,on_delete=models.CASCADE)
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
-    quantity = models.IntegerField(default = 0)
+    quantity = models.IntegerField(default = 1)
+
+class Order(models.Model):
+    class Status(models.TextChoices):
+        PENDING = 'pending', _('pending')
+        DELIVERED = 'delivered', _('delivered')
+        CANCELLED = 'cancelled', _('cancelled')
+        APPROVED = 'approved', _('approved')
+
+    status = models.CharField(max_length = 20, choices = Status.choices, default= Status.PENDING)
+    customer = models.ForeignKey(Customer,on_delete=models.CASCADE)
+    created_at = models.DateTimeField(null=True, blank=True)
+    order_shipping_address = models.CharField(max_length=200, help_text='Shipping Address')
+    order_price = models.FloatField()
+    updated_at = models.DateTimeField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        updated_at = datetime.now()
+        updated_at_str = updated_at.strftime('%Y-%m-%d %H:%M:%S')
+        super().save(*args, **kwargs)
+        self.updated_at = updated_at_str
+        
+class OrderItem(models.Model):
+     product = models.ForeignKey(Product,on_delete=models.CASCADE)
+     order = models.ForeignKey(Order, on_delete=models.CASCADE)

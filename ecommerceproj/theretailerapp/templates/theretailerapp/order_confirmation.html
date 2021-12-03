@@ -1,0 +1,52 @@
+    {% include 'theretailerapp/generic.html' %}
+        <div class="container">
+          <h1>Confirm Order</h1>
+          <div class="row">
+            {% block content %}
+              {% if items %}
+                <table>
+                  <tr>
+                    <th>Product name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                  </tr>
+                  {% for product in items %}
+                    <tr>
+                      <td>{{ product.product.product_name }}</td>
+                      <td>{{product.product.description}}</td>
+                      <td>{{product.product.price}}</td>
+                      <td>{{product.quantity}}</td>
+                    </tr>
+                  {% endfor %}
+                </table>
+              {% else %}
+                <p>There are no products in basket.</p>
+              {% endif %} 
+            {% endblock %}
+          </div>
+            <p>Total Amount: {{total_price}}</p>
+        <p>
+            <a class="btn btn-primary" data-toggle="collapse" href="#collapse1" role="button" aria-expanded="false" aria-controls="collapse1">
+                Place order
+            </a>
+        </p>
+        <div class="collapse" id="collapse1">
+            <div class="card card-body">
+                    <form action="" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                    <p>
+                        <label for="id_shipping_address">Shipping Address:</label>
+                        <input type="text" name="shipping_address" id="shipping_address" value = "{{shipping_address}}" required />
+                    </p>
+                    <div >
+                        <button class="btn btn-primary" type="submit" value="Submit">Submit</button>
+                    </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+  </body>
+</html>
