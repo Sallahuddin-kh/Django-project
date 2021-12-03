@@ -6,12 +6,19 @@ from django.utils.translation import gettext_lazy as _
 from datetime import datetime
 
 class Country(models.Model):
+    """
+    Model for the country. Stores the name of countries
+    """
     country_name = models.CharField(max_length=200, help_text='Enter a Country name')
 
     def __str__(self):
         return self.country_name
 
 class Customer(models.Model):
+    """
+    Customer Model to store the details of the customer.
+    Country is the forign key with the Country model.
+    """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, help_text='Unique ID for this particular customer across whole shop')
     first_name = models.CharField(max_length=20, help_text='Enter first name')
     last_name = models.CharField(max_length=20, help_text='Enter last name')
@@ -27,6 +34,10 @@ class Customer(models.Model):
         return self.first_name
 
 class Product(models.Model):
+    """
+    Product Object to store the objects.
+    Is active field determine weather product should be shown in listing.
+    """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, help_text='Unique ID for this particular product across whole shop')
     product_name = models.CharField(max_length=50, help_text='Enter first name')
     description = models.CharField(max_length=1000,help_text='Description of the product')
@@ -39,14 +50,26 @@ class Product(models.Model):
         return self.product_name
 
 class Basket(models.Model):
+    """
+    Basket product having OnetoOne relation with Customer.
+    """
     customer = models.ForeignKey(Customer,on_delete=models.CASCADE)
 
 class BasketItem(models.Model):
+    """
+    Basket Item to store the product in a basket. A basketItem for a product
+    is unique per basket. A single Basket can have multiple basketItems. 
+    """
     basket = models.ForeignKey(Basket,on_delete=models.CASCADE)
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
     quantity = models.IntegerField(default = 1)
 
 class Order(models.Model):
+    """
+    Order model store a single order of a customer. A single customer can have multiple
+    orders. Order can have status of pending, delivered, cancelled and approved. Updated_at field
+    is updated to current datetime when the object is updated.
+    """
     class Status(models.TextChoices):
         PENDING = 'pending', _('pending')
         DELIVERED = 'delivered', _('delivered')
@@ -67,5 +90,8 @@ class Order(models.Model):
         self.updated_at = updated_at_str
         
 class OrderItem(models.Model):
-     product = models.ForeignKey(Product,on_delete=models.CASCADE)
-     order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    """
+    OrderItem stores a single product in a order. A single order can have multiple orderItems.
+    """
+    product = models.ForeignKey(Product,on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)

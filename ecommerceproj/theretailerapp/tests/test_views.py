@@ -3,8 +3,12 @@ from django.urls import reverse
 from theretailerapp.models import BasketItem , Product, Customer, Country
 
 class TestViews(TestCase):
-    basket_instance = []
     def setUp(self):
+        """
+        Runs before all test to make the db in the state from
+        where test cases can run. Makes the customer object and logs
+        the customer In.
+        """
         country = Country(country_name = 'Pakistan')
         country.save()
         customer = Customer(first_name = 'firstname',
@@ -27,6 +31,9 @@ class TestViews(TestCase):
         s.save()
 
     def test_item_added_from_basket(self):
+        """
+        Unit test to check if the quantity of product decreases when added to basket.
+        """
         product = Product(product_name = 'test_product',
                          description = 'test description', 
                          price = 2000, 
@@ -44,6 +51,9 @@ class TestViews(TestCase):
             assert False, "ITEM NOT REDUCED WHEN ADDED TO BASKET"
 
     def test_item_removed_from_basket(self):
+        """
+        Unit test to check if the quantity of product increases when removed from basket.
+        """
         product = Product(product_name = 'test_product6',
                          description = 'test description', 
                          price = 2000, 
@@ -62,6 +72,9 @@ class TestViews(TestCase):
             assert False, "ITEM NOT ADDED BACK WHEN REMOVED FROM BASKET"
 
     def test_order_removed(self):
+        """
+        Unit test for the check if the quantity of products increase when order is cancelled.
+        """
         product = Product(product_name = 'test_product_1',
                          description = 'test description_1', 
                          price = 2000, 
@@ -83,6 +96,9 @@ class TestViews(TestCase):
 
 
     def test_non_active_listing(self):
+        """
+        Unit test to ensure if the product listing does not contain inactive products.
+        """
         product1 = Product(product_name = 'test_product_3',
                          description = 'test description_3', 
                          price = 2000, 
