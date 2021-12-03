@@ -10,9 +10,9 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ('customer', 'status' ,'created_at', 'updated_at' , 'order_shipping_address','order_price','order_products')
     list_filter = ('customer__email', 'created_at')
     fields = ('customer', 'status' ,'created_at', 'updated_at' , 'order_shipping_address','order_price')
-    
-    def order_products(self, obj):
-        items = OrderItem.objects.filter(order = obj)
+
+    def order_products(self, order_obj):
+        items = OrderItem.objects.filter(order = order_obj)
         products = []
         for item in items:
             products.append(item.product.product_name)
