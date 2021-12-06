@@ -7,9 +7,9 @@ class ProductTabularInline(admin.TabularInline):
 
 class OrderAdmin(admin.ModelAdmin):
     inlines = [ProductTabularInline]
-    list_display = ('customer', 'status' ,'created_at', 'updated_at' , 'order_shipping_address','order_price','order_products')
+    list_display = ('customer', 'status', 'created_at', 'updated_at', 'order_shipping_address', 'order_price', 'order_products')
     list_filter = ('customer__email', 'created_at')
-    fields = ('customer', 'status' ,'created_at', 'updated_at' , 'order_shipping_address','order_price')
+    fields = ('customer', 'status', 'created_at', 'updated_at', 'order_shipping_address', 'order_price')
 
     def order_products(self, order_obj):
         items = OrderItem.objects.filter(order = order_obj)
@@ -23,5 +23,5 @@ admin.site.register(Customer)
 admin.site.register(Product)
 admin.site.register(Basket)
 admin.site.register(BasketItem)
-admin.site.register(Order,OrderAdmin)
+admin.site.register(Order, OrderAdmin)
 admin.site.register(OrderItem)

@@ -19,8 +19,8 @@ class TestViews(TestCase):
                             ph_number = '+92345654345',
                             email = 'test@gmail.com',
                             counrty = country,
-                            created_at =  '2021-11-12',
-                            updated_at =  '2021-11-12')
+                            created_at = '2021-11-12',
+                            updated_at = '2021-11-12')
         self.cus = customer
         customer.save()
         s = self.client.session
@@ -43,7 +43,7 @@ class TestViews(TestCase):
                          updated_at = '2021-11-12')
         
         product.save()   
-        self.client.get(reverse('add_to_basket', kwargs={'product_id': str(product.id)}))
+        self.client.get(reverse('add_to_basket', kwargs = {'product_id': str(product.id)}))
         product = Product.objects.get(id = product.id)
         if product.available_quantity == 9:
             assert True, "ITEM REDUCED WHEN ADDED TO BASKET"
@@ -62,7 +62,7 @@ class TestViews(TestCase):
                          created_at = '2021-11-12',
                          updated_at = '2021-11-12')
         product.save()   
-        self.client.get(reverse('add_to_basket', kwargs={'product_id': str(product.id)}))
+        self.client.get(reverse('add_to_basket', kwargs = {'product_id': str(product.id)}))
         basket_item = BasketItem.objects.filter(product = product).get()
         self.client.get(reverse('remove_from_basket', kwargs={'basketitem_id': str(basket_item.id)}))
         product = Product.objects.get(id = product.id)
@@ -83,11 +83,11 @@ class TestViews(TestCase):
                          created_at = '2021-11-12',
                          updated_at = '2021-11-12')
         product.save()   
-        self.client.get(reverse('add_to_basket', kwargs={'product_id': str(product.id)}))
-        self.client.get(reverse('add_to_basket', kwargs={'product_id': str(product.id)}))
+        self.client.get(reverse('add_to_basket', kwargs = {'product_id': str(product.id)}))
+        self.client.get(reverse('add_to_basket', kwargs = {'product_id': str(product.id)}))
         self.client.post(reverse('place_order_form'), {'shipping_address': 'House Test'})
         product = Product.objects.get(id = product.id)
-        self.client.get(reverse('cancel_order', kwargs={'order_id': 1}))
+        self.client.get(reverse('cancel_order', kwargs = {'order_id': 1}))
         product = Product.objects.get(id = product.id)
         if product.available_quantity == 20:
             assert True, "QUANTITY FOR ORDER ADDED ITEMS RESTORED"
@@ -129,6 +129,6 @@ class TestViews(TestCase):
         for product_item in product_list:
             if product_item.is_active == False:
                 flag = False
-                assert False,"INACTIVE PRODUCTS STILL BEING SHOWN IN THE LISTING"
+                assert False, "INACTIVE PRODUCTS STILL BEING SHOWN IN THE LISTING"
         if flag:
-            assert True , "INACTIVE PRODUCTS NOT SHOWN IN THE LISTING"
+            assert True, "INACTIVE PRODUCTS NOT SHOWN IN THE LISTING"

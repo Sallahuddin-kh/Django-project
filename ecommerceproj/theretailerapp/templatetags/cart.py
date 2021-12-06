@@ -1,9 +1,8 @@
 from django import template
 register = template.Library()
-import uuid
 
-@register.filter(name='cart_quantity')
-def cart_quantity(product:uuid, cart:dict):
+@register.filter(name = 'cart_quantity')
+def cart_quantity(product:str, cart:dict):
     """
     Filter to get the quantity of product in cart
     from the product id.

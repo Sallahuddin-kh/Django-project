@@ -26,7 +26,7 @@ class Customer(models.Model):
     billing_address = models.CharField(max_length=200, help_text='Billing Address')
     password = models.CharField(max_length=50)
     ph_number = PhoneNumberField()
-    email = models.EmailField(unique=True,max_length = 254)
+    email = models.EmailField(unique=True, max_length = 254)
     counrty = models.ForeignKey('Country', on_delete=models.SET_NULL, null=True)
     created_at = models.DateField(null=True, blank=True)
     updated_at = models.DateField(null=True, blank=True)
@@ -40,7 +40,7 @@ class Product(models.Model):
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, help_text='Unique ID for this particular product across whole shop')
     product_name = models.CharField(max_length=50, help_text='Enter first name')
-    description = models.CharField(max_length=1000,help_text='Description of the product')
+    description = models.CharField(max_length=1000, help_text='Description of the product')
     price = models.FloatField()
     available_quantity = models.PositiveIntegerField()
     created_at = models.DateField(null=True, blank=True)
@@ -53,15 +53,15 @@ class Basket(models.Model):
     """
     Basket product having OnetoOne relation with Customer.
     """
-    customer = models.ForeignKey(Customer,on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
 
 class BasketItem(models.Model):
     """
     Basket Item to store the product in a basket. A basketItem for a product
     is unique per basket. A single Basket can have multiple basketItems. 
     """
-    basket = models.ForeignKey(Basket,on_delete=models.CASCADE)
-    product = models.ForeignKey(Product,on_delete=models.CASCADE)
+    basket = models.ForeignKey(Basket, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(default = 1)
 
 class Order(models.Model):
@@ -77,7 +77,7 @@ class Order(models.Model):
         APPROVED = 'approved', _('approved')
 
     status = models.CharField(max_length = 20, choices = Status.choices, default= Status.PENDING)
-    customer = models.ForeignKey(Customer,on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     created_at = models.DateTimeField(null=True, blank=True)
     order_shipping_address = models.CharField(max_length=200, help_text='Shipping Address')
     order_price = models.FloatField()
@@ -93,5 +93,5 @@ class OrderItem(models.Model):
     """
     OrderItem stores a single product in a order. A single order can have multiple orderItems.
     """
-    product = models.ForeignKey(Product,on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
