@@ -12,6 +12,7 @@
                 <th>Available quantity</th>
                 <th>Created At</th>
                 <th>Updated At</th>
+                <th>Add to Basket</th>
               </tr>
               {% for product in product_list %}
                 <tr>
@@ -21,9 +22,31 @@
                   <td>{{product.available_quantity}}</td>
                   <td>{{product.created_at}}</td>
                   <td>{{product.updated_at}}</td>
+                  <td> <a href="{% url 'add_to_basket' product.id %}">Add</a></td>
                 </tr>
               {% endfor %}
             </table>
+            {% if product_list.has_other_pages %}
+              <ul class="pagination">
+                {% if product_list.has_previous %}
+                  <li><a href="?page={{ product_list.previous_page_number }}">&laquo;</a></li>
+                {% else %}
+                  <li class="disabled"><span>&laquo;</span></li>
+                {% endif %}
+                {% for i in product_list.paginator.page_range %}
+                  {% if product_list.number == i %}
+                    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                  {% else %}
+                    <li><a href="?page={{ i }}">{{ i }}</a></li>
+                  {% endif %}
+                {% endfor %}
+                {% if product_list.has_next %}
+                  <li><a href="?page={{ product_list.next_page_number }}">&raquo;</a></li>
+                {% else %}
+                  <li class="disabled"><span>&raquo;</span></li>
+                {% endif %}
+              </ul>
+            {% endif %}
           {% else %}
             <p>There are no products.</p>
           {% endif %} 
