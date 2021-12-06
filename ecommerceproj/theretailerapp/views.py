@@ -1,3 +1,4 @@
+from django.http.request import HttpRequest
 from django.shortcuts import render
 from .models import  Customer, Product, Country, Basket, BasketItem, Order, OrderItem
 from django.views import generic
@@ -5,8 +6,6 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 import datetime
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django_hint import RequestType
-import uuid
 
 class CustomerListView(generic.ListView):
     """
@@ -14,14 +13,14 @@ class CustomerListView(generic.ListView):
     """
     model = Customer
 
-def get_customer_object_from_session(request:RequestType):
+def get_customer_object_from_session(request:HttpRequest):
     """
     Gets the customer object by using email stored in session.
     """
     customer_email= request.session['email']
     return Customer.objects.get(email = customer_email)
 
-def product_list_view(request:RequestType):
+def product_list_view(request:HttpRequest):
     """
     List View for products. Return only active products
     Responses with the paginated list.
@@ -38,7 +37,7 @@ def product_list_view(request:RequestType):
     context = {'product_list':products}
     return render(request, 'theretailerapp/product_list.html', context)
 
-def insert_customer(request:RequestType):
+def insert_customer(request:HttpRequest):
     """
     Customer Sign-up method. Responses with the success message if customer inserted.
     Otherwise returns error message.
@@ -85,7 +84,7 @@ def insert_customer(request:RequestType):
         return HttpResponseRedirect('/product')
     return render(request,'theretailerapp/customer_signup_form.html', {'countries':country},)
 
-def login_customer(request:RequestType):
+def login_customer(request:HttpRequest):
     """
     Customer Login method returns success message if customer insertion successful.
     Stores the necessary customer details in the session.
@@ -108,7 +107,7 @@ def login_customer(request:RequestType):
             messages.error(request,'Incorrect email')
     return render(request,'theretailerapp/customer_signin_form.html')
 
-def customer_sign_out(request:RequestType):
+def customer_sign_out(request:HttpRequest):
     """
     Customer Signout. Removes the details from the session.
     """
@@ -117,7 +116,7 @@ def customer_sign_out(request:RequestType):
     messages.success(request, 'Signed Out Successfully')
     return HttpResponseRedirect('/product')
 
-def add_product_to_basket(request,product_id:uuid):
+def add_product_to_basket(request,product_id:str):
     """
     Adds products in the db basket if customer loggedin. Otherwise saves the product
     in the session.
@@ -163,7 +162,7 @@ def add_product_to_basket(request,product_id:uuid):
         messages.success(request, msg)
         return HttpResponseRedirect('/product')
 
-def customer_basket(request:RequestType):
+def customer_basket(request:HttpRequest):
     """
     Retrieves customer basket from db if customer is logged in. Otherwise retrieves from
     the session.
@@ -186,7 +185,7 @@ def customer_basket(request:RequestType):
             return render(request,'theretailerapp/basket_list.html',{'items':products})
         return render(request,'theretailerapp/basket_list.html')
 
-def remove_product_from_basket(request:RequestType,basketitem_id:int):
+def remove_product_from_basket(request:HttpRequest,basketitem_id:int):
     """
     Removes the product from the db basket.
     """
@@ -204,7 +203,7 @@ def remove_product_from_basket(request:RequestType,basketitem_id:int):
     else:
         return HttpResponseRedirect('/customer/login')
 
-def remove_product_from_session_basket(request:RequestType,product_id:uuid):
+def remove_product_from_session_basket(request:HttpRequest,product_id:str):
     """
     Removes the product from the user basket store in session.
     """
@@ -219,7 +218,7 @@ def remove_product_from_session_basket(request:RequestType,product_id:uuid):
     request.session['cart'] = cart
     return HttpResponseRedirect('/basket')
 
-def convert_sessionbasket_to_tablebasket(request:RequestType):
+def convert_sessionbasket_to_tablebasket(request:HttpRequest):
     """
     Function called when the customer wants to merge the session basket and 
     the basket stored in the db.
@@ -246,7 +245,7 @@ def convert_sessionbasket_to_tablebasket(request:RequestType):
             del request.session['cart']
     return HttpResponseRedirect('/basket')
 
-def calculate_basket_total_price(basket_items:RequestType):
+def calculate_basket_total_price(basket_items:HttpRequest):
     """
     Function to sum up the total price in the basket_item of products.
     """
@@ -256,7 +255,7 @@ def calculate_basket_total_price(basket_items:RequestType):
             total_price = total_price + item.product.price
     return total_price
 
-def place_order_form(request:RequestType):
+def place_order_form(request:HttpRequest):
     """
     Places the order. Adds the product from the basket into the order.
     A user can have one basket associated to him in db. But order can 
@@ -295,7 +294,7 @@ def place_order_form(request:RequestType):
     else:
         return HttpResponseRedirect('/customer/login')
 
-def show_customer_orders(request:RequestType):
+def show_customer_orders(request:HttpRequest):
     """
     Show the order of a customer in paginated form.
     """
@@ -318,7 +317,7 @@ def show_customer_orders(request:RequestType):
     else:
         return HttpResponseRedirect('/customer/login')
 
-def show_order_details(request:RequestType,order_id:int):
+def show_order_details(request:HttpRequest,order_id:int):
     """
     Returns the details of order.
     """
@@ -329,7 +328,7 @@ def show_order_details(request:RequestType,order_id:int):
     else:
         return HttpResponseRedirect('/customer/login')
 
-def cancel_order(request:RequestType,order_id:int):
+def cancel_order(request:HttpRequest,order_id:int):
     """
     Cancel order changed the status field in order to cancelled. Also updates
     the updated_at field to current datetime.
@@ -348,7 +347,7 @@ def cancel_order(request:RequestType,order_id:int):
     else:
         return HttpResponseRedirect('/customer/login')
 
-def filter_orders(request:RequestType):
+def filter_orders(request:HttpRequest):
     """
     Returns the order according the filter option in query.
     """
@@ -377,14 +376,14 @@ def filter_orders(request:RequestType):
     else:
         return HttpResponseRedirect('/customer/login')
 
-def increase_basket_item_quantity(request:RequestType,product_id:uuid):
+def increase_basket_item_quantity(request:HttpRequest,product_id:str):
     """
     Increases the basket item quantity by one. Either in db or session.
     """
     add_product_to_basket(request,product_id)
     return HttpResponseRedirect('/basket')
 
-def decrease_basket_item_quantity(request:RequestType,product_id:uuid):
+def decrease_basket_item_quantity(request:HttpRequest,product_id:str):
     """
     Decreases the basket item quantity by one. Either in db or session.
     """
