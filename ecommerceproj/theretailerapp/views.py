@@ -1,3 +1,4 @@
+from django.http.request import HttpRequest
 from django.shortcuts import render
 from .models import  Customer, Product, Country, Basket, BasketItem, Order, OrderItem
 from django.views import generic
@@ -7,13 +8,23 @@ import datetime
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 class CustomerListView(generic.ListView):
+    """
+    List View Class for the customer list.
+    """
     model = Customer
 
-def get_customer_object_from_session(request):
+def get_customer_object_from_session(request:HttpRequest):
+    """
+    Gets the customer object by using email stored in session.
+    """
     customer_email= request.session['email']
     return Customer.objects.get(email = customer_email)
 
-def product_list_view(request):
+def product_list_view(request:HttpRequest):
+    """
+    List View for products. Return only active products
+    Responses with the paginated list.
+    """
     product_list = Product.objects.filter(is_active = True)
     page = request.GET.get('page', 1)
     paginator = Paginator(product_list, 5)
@@ -26,9 +37,13 @@ def product_list_view(request):
     context = {'product_list':products}
     return render(request, 'theretailerapp/product_list.html', context)
 
-def insert_customer(request):
+def insert_customer(request:HttpRequest):
+    """
+    Customer Sign-up method. Responses with the success message if customer inserted.
+    Otherwise returns error message.
+    """
     if 'email' in request.session:
-        messages.warning(request,'Customer Already logged In. Sign Out to proceed')
+        messages.warning(request, 'Customer Already logged In. Sign Out to proceed')
         return HttpResponseRedirect('/product')
     country  = Country.objects.all()
     if request.method == 'POST':
@@ -41,11 +56,11 @@ def insert_customer(request):
         password = request.POST.get("password")
         confirm_password = request.POST.get("confirm_password")
         if password != confirm_password:
-            messages.error(request,'Password and Confirm password do not match')
-            return render(request,'theretailerapp/customer_signup_form.html', {'countries':country},)
+            messages.error(request, 'Password and Confirm password do not match')
+            return render(request, 'theretailerapp/customer_signup_form.html', {'countries':country},)
         if Customer.objects.filter(email = email).exists():
-            messages.error(request,'Email Already exists')
-            return render(request,'theretailerapp/customer_signup_form.html', {'countries':country},)
+            messages.error(request, 'Email Already exists')
+            return render(request, 'theretailerapp/customer_signup_form.html', {'countries':country},)
         selected_country  = request.POST.get("country")
         selected_country_obj = Country.objects.get(country_name = selected_country)
         created_at = datetime.date.today()
@@ -64,14 +79,18 @@ def insert_customer(request):
             customer_instance.save()
         except Exception as e:
             print(e)
-            messages.error(request,'System was not able to register try later')
+            messages.error(request, 'System was not able to register try later')
         messages.success(request, 'Customer Accounted Created Succesfully.')
         return HttpResponseRedirect('/product')
-    return render(request,'theretailerapp/customer_signup_form.html', {'countries':country},)
+    return render(request, 'theretailerapp/customer_signup_form.html', {'countries':country})
 
-def login_customer(request):
+def login_customer(request:HttpRequest):
+    """
+    Customer Login method returns success message if customer insertion successful.
+    Stores the necessary customer details in the session.
+    """
     if 'email' in request.session:
-        messages.warning(request,'Customer Already logged In')
+        messages.warning(request, 'Customer Already logged In')
         return HttpResponseRedirect('/product')
     if request.method == 'POST':
         email = request.POST.get("email")
@@ -83,18 +102,25 @@ def login_customer(request):
                 request.session['first_name'] = customer.first_name
                 return HttpResponseRedirect('/product')
             else:
-                messages.error(request,'Incorrect password')
+                messages.error(request, 'Incorrect password')
         else:
-            messages.error(request,'Incorrect email')
-    return render(request,'theretailerapp/customer_signin_form.html')
+            messages.error(request, 'Incorrect email')
+    return render(request, 'theretailerapp/customer_signin_form.html')
 
-def customer_sign_out(request):
+def customer_sign_out(request:HttpRequest):
+    """
+    Customer Signout. Removes the details from the session.
+    """
     del request.session['email']
     del request.session['first_name']
     messages.success(request, 'Signed Out Successfully')
     return HttpResponseRedirect('/product')
 
-def add_product_to_basket(request,product_id):
+def add_product_to_basket(request, product_id:str):
+    """
+    Adds products in the db basket if customer loggedin. Otherwise saves the product
+    in the session.
+    """
     product_obj = Product.objects.get(id = product_id)
     available_quantity = product_obj.available_quantity
     if available_quantity <= 0:
@@ -112,7 +138,7 @@ def add_product_to_basket(request,product_id):
             basket_item = BasketItem.objects.filter(basket=basket).filter(product = product_obj).get()
             BasketItem.objects.filter(basket=basket).filter(product = product_obj).update(quantity = basket_item.quantity + 1)
         else:
-            basket_item = BasketItem(basket = basket,product = product_obj,quantity = 1)
+            basket_item = BasketItem(basket = basket,product = product_obj, quantity = 1)
             basket_item.save()
         Product.objects.filter(id = product_id).update(available_quantity = available_quantity - 1)
         msg = product_obj.product_name + ' Added to basket successfully'
@@ -136,7 +162,11 @@ def add_product_to_basket(request,product_id):
         messages.success(request, msg)
         return HttpResponseRedirect('/product')
 
-def customer_basket(request):
+def customer_basket(request:HttpRequest):
+    """
+    Retrieves customer basket from db if customer is logged in. Otherwise retrieves from
+    the session.
+    """
     cart = request.session.get('cart')
     if 'email' in request.session:
         basket_message = False
@@ -146,31 +176,37 @@ def customer_basket(request):
         if Basket.objects.filter(customer = customer_obj).exists():
             basket = Basket.objects.filter(customer = customer_obj).get()
             basket_items = BasketItem.objects.filter(basket = basket)
-            return render(request,'theretailerapp/basket_list.html',{'items':basket_items , 'basket_message' : basket_message})
-        return render(request,'theretailerapp/basket_list.html',{'basket_message' : basket_message})
+            return render(request, 'theretailerapp/basket_list.html', {'items':basket_items, 'basket_message' : basket_message})
+        return render(request, 'theretailerapp/basket_list.html', {'basket_message' : basket_message})
     else:
         if cart:
             keys = list(cart.keys())
             products = Product.objects.filter(id__in = keys)
-            return render(request,'theretailerapp/basket_list.html',{'items':products})
-        return render(request,'theretailerapp/basket_list.html')
+            return render(request, 'theretailerapp/basket_list.html', {'items':products})
+        return render(request, 'theretailerapp/basket_list.html')
 
-def remove_product_from_basket(request,basketitem_id):
+def remove_product_from_basket(request:HttpRequest, basketitem_id:int):
+    """
+    Removes the product from the db basket.
+    """
     if 'email' in request.session:
-        basket_item= BasketItem.objects.filter(id=basketitem_id).get()
+        basket_item= BasketItem.objects.filter(id = basketitem_id).get()
         product_name = basket_item.product.product_name
         product_id = basket_item.product.id
         product_quantity = basket_item.quantity
         available_quantity = Product.objects.filter(id = product_id).get().available_quantity
-        Product.objects.filter(id = product_id).update(available_quantity = available_quantity +product_quantity)
+        Product.objects.filter(id = product_id).update(available_quantity = available_quantity + product_quantity)
         msg = product_name + ' removed from basket successfully'
-        BasketItem.objects.filter(id=basketitem_id).delete()
+        BasketItem.objects.filter(id = basketitem_id).delete()
         messages.success(request, msg)
         return HttpResponseRedirect('/basket')
     else:
         return HttpResponseRedirect('/customer/login')
 
-def remove_product_from_session_basket(request,product_id):
+def remove_product_from_session_basket(request:HttpRequest, product_id:str):
+    """
+    Removes the product from the user basket store in session.
+    """
     product_obj = Product.objects.get(id = product_id)
     available_quantity = product_obj.available_quantity
     cart = request.session.get('cart')
@@ -182,7 +218,11 @@ def remove_product_from_session_basket(request,product_id):
     request.session['cart'] = cart
     return HttpResponseRedirect('/basket')
 
-def convert_sessionbasket_to_tablebasket(request):
+def convert_sessionbasket_to_tablebasket(request:HttpRequest):
+    """
+    Function called when the customer wants to merge the session basket and 
+    the basket stored in the db.
+    """
     if 'email' in request.session:
         customer_obj = get_customer_object_from_session(request)
         if not Basket.objects.filter(customer = customer_obj).exists():
@@ -200,19 +240,27 @@ def convert_sessionbasket_to_tablebasket(request):
                     quantity = basket_item.quantity + cart[key]
                     BasketItem.objects.filter(basket = basket).filter(product = product_obj).update(quantity = quantity)
                 else:
-                    basket_item = BasketItem(basket = basket,product = product_obj,quantity = cart[key])
+                    basket_item = BasketItem(basket = basket, product = product_obj, quantity = cart[key])
                     basket_item.save()
             del request.session['cart']
     return HttpResponseRedirect('/basket')
 
-def calculate_basket_total_price(basket_items):
+def calculate_basket_total_price(basket_items:HttpRequest):
+    """
+    Function to sum up the total price in the basket_item of products.
+    """
     total_price = 0
     for item in basket_items:
         for i in range(item.quantity):
             total_price = total_price + item.product.price
     return total_price
 
-def place_order_form(request):
+def place_order_form(request:HttpRequest):
+    """
+    Places the order. Adds the product from the basket into the order.
+    A user can have one basket associated to him in db. But order can 
+    be multiple.
+    """
     if 'email' in request.session:
         customer_obj = get_customer_object_from_session(request)
         basket = Basket.objects.filter(customer = customer_obj).get()
@@ -220,7 +268,7 @@ def place_order_form(request):
         default_shipping_address = customer_obj.shipping_address
         total_price = calculate_basket_total_price(basket_items)
         if request.method == 'GET':
-            return render(request,'theretailerapp/order_confirmation.html',{'items':basket_items,
+            return render(request, 'theretailerapp/order_confirmation.html', {'items':basket_items,
                                                                             'shipping_address':default_shipping_address,
                                                                             'total_price':total_price})
         elif request.method == 'POST':
@@ -237,7 +285,7 @@ def place_order_form(request):
             for item in basket_items:
                 product = item.product
                 for i in range(item.quantity):
-                    order_item_instance = OrderItem(product=product, order = order_instance)
+                    order_item_instance = OrderItem(product = product, order = order_instance)
                     order_item_instance.save()
                 item.delete()
             basket.delete()
@@ -246,12 +294,15 @@ def place_order_form(request):
     else:
         return HttpResponseRedirect('/customer/login')
 
-def show_customer_orders(request):
+def show_customer_orders(request:HttpRequest):
+    """
+    Show the order of a customer in paginated form.
+    """
     if 'email' in request.session:
         customer_obj = get_customer_object_from_session(request)
         order_list = Order.objects.filter(customer = customer_obj)
-        start_date ='' 
-        end_date = ''
+        start_date = '' 
+        end_date =  ''
         page = request.GET.get('page', 1)
         paginator = Paginator(order_list, 5)
         try:
@@ -260,21 +311,28 @@ def show_customer_orders(request):
             orders = paginator.page(1)
         except EmptyPage:
             orders = paginator.page(paginator.num_pages)
-        return render(request,'theretailerapp/order_list.html', {'order_list' :  orders,
+        return render(request, 'theretailerapp/order_list.html', {'order_list' :  orders,
                                                                 'start_date':start_date,
                                                                 'end_date':end_date})
     else:
         return HttpResponseRedirect('/customer/login')
 
-def show_order_details(request,order_id):
+def show_order_details(request:HttpRequest, order_id:int):
+    """
+    Returns the details of order.
+    """
     if 'email' in request.session:
         order_items = OrderItem.objects.filter(order = order_id)
         order = Order.objects.get(id = order_id)
-        return render(request,'theretailerapp/order_details.html', {'product_list' :  order_items, 'order': order})
+        return render(request, 'theretailerapp/order_details.html', {'product_list' :  order_items, 'order': order})
     else:
         return HttpResponseRedirect('/customer/login')
 
-def cancel_order(request,order_id):
+def cancel_order(request:HttpRequest, order_id:int):
+    """
+    Cancel order changed the status field in order to cancelled. Also updates
+    the updated_at field to current datetime.
+    """
     if 'email' in request.session:
         updated_at = datetime.datetime.now()
         updated_at_str = updated_at.strftime('%Y-%m-%d %H:%M:%S')
@@ -284,12 +342,15 @@ def cancel_order(request,order_id):
         for item in order_items:
             available_quantity = Product.objects.filter(id = item.product.id).get().available_quantity
             Product.objects.filter(id = item.product.id).update(available_quantity = available_quantity + 1)
-        messages.warning(request,'Order Cancelled')
+        messages.warning(request, 'Order Cancelled')
         return HttpResponseRedirect('/order')
     else:
         return HttpResponseRedirect('/customer/login')
 
-def filter_orders(request):
+def filter_orders(request:HttpRequest):
+    """
+    Returns the order according the filter option in query.
+    """
     if 'email' in request.session:
         from_date = request.GET.get('from_filter_date')
         to_date = request.GET.get('to_filter_date')
@@ -297,7 +358,7 @@ def filter_orders(request):
         customer_obj = get_customer_object_from_session(request)
         order_list = Order.objects.filter(customer = customer_obj)
         if(from_date != '' and to_date != ''):
-            order_list = order_list.filter(created_at__range=[from_date, to_date])
+            order_list = order_list.filter(created_at__range = [from_date, to_date])
         if status != 'None':
             order_list = order_list.filter(status = status)
         page = request.GET.get('page', 1)
@@ -308,18 +369,24 @@ def filter_orders(request):
             orders = paginator.page(1)
         except EmptyPage:
             orders = paginator.page(paginator.num_pages)
-        return render(request,'theretailerapp/order_list_filter.html', {'order_list' :  orders,
-                                                                'start_date':from_date,
-                                                                'end_date':to_date,
-                                                                'status' : status})
+        return render(request, 'theretailerapp/order_list_filter.html', {'order_list' :  orders,
+                                                                        'start_date':from_date,
+                                                                        'end_date':to_date,
+                                                                        'status' : status})
     else:
         return HttpResponseRedirect('/customer/login')
 
-def increase_basket_item_quantity(request,product_id):
-    add_product_to_basket(request,product_id)
+def increase_basket_item_quantity(request:HttpRequest, product_id:str):
+    """
+    Increases the basket item quantity by one. Either in db or session.
+    """
+    add_product_to_basket(request, product_id)
     return HttpResponseRedirect('/basket')
 
-def decrease_basket_item_quantity(request,product_id):
+def decrease_basket_item_quantity(request:HttpRequest, product_id:str):
+    """
+    Decreases the basket item quantity by one. Either in db or session.
+    """
     product_obj = Product.objects.get(id = product_id)
     if 'email' in request.session:
         customer_obj = get_customer_object_from_session(request)

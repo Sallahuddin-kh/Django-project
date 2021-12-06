@@ -3,8 +3,12 @@ from django.urls import reverse
 from theretailerapp.models import BasketItem , Product, Customer, Country
 
 class TestViews(TestCase):
-    basket_instance = []
     def setUp(self):
+        """
+        Runs before all test to make the db in the state from
+        where test cases can run. Makes the customer object and logs
+        the customer In.
+        """
         country = Country(country_name = 'Pakistan')
         country.save()
         customer = Customer(first_name = 'firstname',
@@ -15,8 +19,8 @@ class TestViews(TestCase):
                             ph_number = '+92345654345',
                             email = 'test@gmail.com',
                             counrty = country,
-                            created_at =  '2021-11-12',
-                            updated_at =  '2021-11-12')
+                            created_at = '2021-11-12',
+                            updated_at = '2021-11-12')
         self.cus = customer
         customer.save()
         s = self.client.session
@@ -27,6 +31,9 @@ class TestViews(TestCase):
         s.save()
 
     def test_item_added_from_basket(self):
+        """
+        Unit test to check if the quantity of product decreases when added to basket.
+        """
         product = Product(product_name = 'test_product',
                          description = 'test description', 
                          price = 2000, 
@@ -36,7 +43,7 @@ class TestViews(TestCase):
                          updated_at = '2021-11-12')
         
         product.save()   
-        self.client.get(reverse('add_to_basket', kwargs={'product_id': str(product.id)}))
+        self.client.get(reverse('add_to_basket', kwargs = {'product_id': str(product.id)}))
         product = Product.objects.get(id = product.id)
         if product.available_quantity == 9:
             assert True, "ITEM REDUCED WHEN ADDED TO BASKET"
@@ -44,6 +51,9 @@ class TestViews(TestCase):
             assert False, "ITEM NOT REDUCED WHEN ADDED TO BASKET"
 
     def test_item_removed_from_basket(self):
+        """
+        Unit test to check if the quantity of product increases when removed from basket.
+        """
         product = Product(product_name = 'test_product6',
                          description = 'test description', 
                          price = 2000, 
@@ -52,7 +62,7 @@ class TestViews(TestCase):
                          created_at = '2021-11-12',
                          updated_at = '2021-11-12')
         product.save()   
-        self.client.get(reverse('add_to_basket', kwargs={'product_id': str(product.id)}))
+        self.client.get(reverse('add_to_basket', kwargs = {'product_id': str(product.id)}))
         basket_item = BasketItem.objects.filter(product = product).get()
         self.client.get(reverse('remove_from_basket', kwargs={'basketitem_id': str(basket_item.id)}))
         product = Product.objects.get(id = product.id)
@@ -62,6 +72,9 @@ class TestViews(TestCase):
             assert False, "ITEM NOT ADDED BACK WHEN REMOVED FROM BASKET"
 
     def test_order_removed(self):
+        """
+        Unit test for the check if the quantity of products increase when order is cancelled.
+        """
         product = Product(product_name = 'test_product_1',
                          description = 'test description_1', 
                          price = 2000, 
@@ -70,11 +83,11 @@ class TestViews(TestCase):
                          created_at = '2021-11-12',
                          updated_at = '2021-11-12')
         product.save()   
-        self.client.get(reverse('add_to_basket', kwargs={'product_id': str(product.id)}))
-        self.client.get(reverse('add_to_basket', kwargs={'product_id': str(product.id)}))
+        self.client.get(reverse('add_to_basket', kwargs = {'product_id': str(product.id)}))
+        self.client.get(reverse('add_to_basket', kwargs = {'product_id': str(product.id)}))
         self.client.post(reverse('place_order_form'), {'shipping_address': 'House Test'})
         product = Product.objects.get(id = product.id)
-        self.client.get(reverse('cancel_order', kwargs={'order_id': 1}))
+        self.client.get(reverse('cancel_order', kwargs = {'order_id': 1}))
         product = Product.objects.get(id = product.id)
         if product.available_quantity == 20:
             assert True, "QUANTITY FOR ORDER ADDED ITEMS RESTORED"
@@ -83,6 +96,9 @@ class TestViews(TestCase):
 
 
     def test_non_active_listing(self):
+        """
+        Unit test to ensure if the product listing does not contain inactive products.
+        """
         product1 = Product(product_name = 'test_product_3',
                          description = 'test description_3', 
                          price = 2000, 
@@ -113,6 +129,6 @@ class TestViews(TestCase):
         for product_item in product_list:
             if product_item.is_active == False:
                 flag = False
-                assert False,"INACTIVE PRODUCTS STILL BEING SHOWN IN THE LISTING"
+                assert False, "INACTIVE PRODUCTS STILL BEING SHOWN IN THE LISTING"
         if flag:
-            assert True , "INACTIVE PRODUCTS NOT SHOWN IN THE LISTING"
+            assert True, "INACTIVE PRODUCTS NOT SHOWN IN THE LISTING"
