@@ -2,11 +2,12 @@ version: "3"
 services:
   db:
     image: postgres:12
+    volumes:
+      - pgdata:/var/lib/posgresql/data/:rw
     environment:
       POSTGRES_DB: 'Dockerized-Django1'
       POSTGRES_PASSWORD: '12345678'
-    volumes:
-      - pgdata:/var/lib/posgresql/data
+      PGDATA: /var/lib/postgresql/data/
     ports:
       - "5432:5432"
   ecommerceproj:
