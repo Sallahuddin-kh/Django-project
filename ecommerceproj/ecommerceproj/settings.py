@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-h+atn9re-nb##*p&v@)f6sk2e)b))u7)%8^gky8$-y%#9*w8wi
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -78,10 +78,10 @@ WSGI_APPLICATION = 'ecommerceproj.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'djangoapp3', 
-        'USER': 'tesla', 
+        'NAME': 'Dockerized-Django1', 
+        'USER': 'postgres', 
         'PASSWORD': '12345678',
-        'HOST': '127.0.0.1', 
+        'HOST': 'db', 
         'PORT': '5432',
     }
 }
