@@ -4,7 +4,6 @@ Ecommerce Django project.
 ### Prerequesites
 Following utilities should be installed in the system in order to run the application:
 - Docker
-- Postgres
 
 ### Setting Up the container
 To set up the containers run the giving commands in command prompt opened in the project folder:
